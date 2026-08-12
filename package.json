@@ -13,7 +13,7 @@
     "test:a11y": "playwright test tests/e2e/a11y.spec.ts",
     "test": "npm run check && npm run test:unit && npm run build && npm run release:gate && npm run test:e2e && npm run test:a11y",
     "release:gate": "node scripts/check-publication-boundary.mjs",
-    "deploy:azure": "swa deploy ./dist --env production --yes"
+    "deploy:azure": "npx --yes --package @azure/static-web-apps-cli@2.0.10 swa deploy ./dist --env production --yes"
   },
   "dependencies": {
     "astro": "7.2.1"
@@ -21,7 +21,6 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@axe-core/playwright": "4.13.0",
-    "@azure/static-web-apps-cli": "2.0.10",
     "@playwright/test": "1.62.1",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
@@ -30,4 +29,3 @@
     "node": ">=24.0.0"
   }
 }
-

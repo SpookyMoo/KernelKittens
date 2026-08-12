@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img">
+  <title>Kernel Kittens cat processor mark</title>
+  <path fill="#FFFFFF" d="M39 48 54 24l18 20h16l18-20 15 24v62a18 18 0 0 1-18 18H57a18 18 0 0 1-18-18Z"/>
+  <g fill="none" stroke-linecap="square" stroke-linejoin="round">
+    <path stroke="#101D2D" stroke-width="7" d="M39 48 54 24l18 20h16l18-20 15 24v62a18 18 0 0 1-18 18H57a18 18 0 0 1-18-18ZM61 73h12m14 0h12M66 94l14 8 14-8"/>
+    <path stroke="#315CF4" stroke-width="5" d="M39 72H17l-7-7M39 87H12M39 102H17l-7 7M121 72h22l7-7M121 87h27M121 102h22l7 7"/>
+  </g>
+  <rect width="12" height="12" x="74" y="78" fill="#F05A47" rx="2"/>
+  <g fill="#315CF4">
+    <circle cx="10" cy="65" r="4"/><circle cx="12" cy="87" r="4"/><circle cx="10" cy="109" r="4"/>
+    <circle cx="150" cy="65" r="4"/><circle cx="148" cy="87" r="4"/><circle cx="150" cy="109" r="4"/>
+  </g>
+</svg>

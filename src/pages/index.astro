@@ -1,0 +1,71 @@
+---
+import BrandMark from "../components/BrandMark.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <div class="page-shell">
+    <section class="hero" aria-labelledby="home-title">
+      <div>
+        <p class="eyebrow">Public team notebook</p>
+        <h1 id="home-title">Kernel Kittens</h1>
+        <p class="lede">CTF write-ups, competition history, and work we can actually show.</p>
+        <p class="supporting-copy">We play CTFs and publish the useful parts once the rules allow it.</p>
+        <div class="button-row">
+          <a class="button-link" href="/writeups/">Read the archive</a>
+          <a class="button-link button-link--quiet" href="/certifications/">Check the record</a>
+        </div>
+      </div>
+
+      <div class="hero-mark" aria-label="Kernel Kittens mark">
+        <BrandMark decorative={true} class="hero-mark__svg" />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="work-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Write-ups</p>
+          <h2 id="work-title">Proof, when it can be public.</h2>
+        </div>
+        <p>Event rules come first. Finished solutions stay private until there is a clear basis to publish them.</p>
+      </div>
+
+      <div class="empty-state">
+        <span class="empty-state__index" aria-hidden="true">00</span>
+        <div>
+          <h3>No public write-ups yet.</h3>
+          <p>Seven confirmed BushBash solves are ready, but the event rules still block publication. They stay private until that changes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="record-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Team record</p>
+          <h2 id="record-title">Claims with labels.</h2>
+        </div>
+        <p>Current credentials, previous credentials, and earlier team results stay clearly separated.</p>
+      </div>
+
+      <div class="record-grid">
+        <article class="record-card">
+          <span class="record-card__label">Current</span>
+          <h3>Google Cybersecurity Professional Certificate</h3>
+          <p>Held by a Kernel Kittens team member.</p>
+        </article>
+        <article class="record-card">
+          <span class="record-card__label">Prior team result</span>
+          <h3>Cyber Apocalypse 2026</h3>
+          <p>12th of 6,744 teams with 1337_PwnSp4c3.</p>
+        </article>
+        <article class="record-card">
+          <span class="record-card__label">Publication rule</span>
+          <h3>No fake proof.</h3>
+          <p>No invented roster, recycled flags, or credentials presented without their real status.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
