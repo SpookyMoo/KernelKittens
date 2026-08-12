@@ -41,6 +41,15 @@ jobs:
       - name: Check dependency advisories
         run: npm audit --audit-level=high
 
+      - name: Save visual review
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: visual-review
+          path: test-results/**/*.png
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Save tested site
         if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

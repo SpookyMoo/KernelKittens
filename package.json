@@ -11,7 +11,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test tests/e2e/site.spec.ts",
     "test:a11y": "playwright test tests/e2e/a11y.spec.ts",
-    "test": "npm run check && npm run test:unit && npm run build && npm run release:gate && npm run test:e2e && npm run test:a11y",
+    "test:visual": "playwright test tests/e2e/visual.spec.ts",
+    "test": "npm run check && npm run test:unit && npm run build && npm run release:gate && npm run test:e2e && npm run test:a11y && npm run test:visual",
     "release:gate": "node scripts/check-publication-boundary.mjs",
     "deploy:azure": "npx --yes --package @azure/static-web-apps-cli@2.0.10 swa deploy ./dist --env production"
   },

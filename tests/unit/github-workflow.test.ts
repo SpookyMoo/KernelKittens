@@ -33,4 +33,18 @@ describe("GitHub verification and deployment workflow", () => {
     expect(actionRefs.every((ref) => /@[0-9a-f]{40}$/.test(ref))).toBe(true);
     expect(actionRefs.every((ref) => /^(actions|Azure)\//.test(ref))).toBe(true);
   });
+
+  it("makes the 320 pixel visual review part of the deployment gate", () => {
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+    const visualSpec = readFileSync("tests/e2e/visual.spec.ts", "utf8");
+    const workflow = readFileSync(workflowPath, "utf8");
+
+    expect(packageJson.scripts["test:visual"]).toBe(
+      "playwright test tests/e2e/visual.spec.ts"
+    );
+    expect(packageJson.scripts.test).toContain("npm run test:visual");
+    expect(visualSpec).toContain("width: 320");
+    expect(visualSpec).not.toContain("width: 390");
+    expect(workflow).toContain("name: visual-review");
+  });
 });

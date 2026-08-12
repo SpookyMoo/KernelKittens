@@ -33,8 +33,9 @@ The verification job runs on pull requests to `main`, pushes to `main`, and manu
 2. installs Node.js 24 from the repository's existing engine contract;
 3. restores dependencies with `npm ci`;
 4. installs Playwright Chromium and its runner dependencies;
-5. runs `npm test` and `npm audit --audit-level=high`;
-6. uploads the generated `dist` directory as a one-day artifact only when the event can deploy.
+5. runs `npm test`, including the 320px visual capture, and `npm audit --audit-level=high`;
+6. retains the visual screenshots for seven days so the release can be inspected;
+7. uploads the generated `dist` directory as a one-day artifact only when the event can deploy.
 
 The deployment job runs only after verification on `main`, for a push or manual run. It downloads the exact tested artifact and sends it to `swa-kernel-kittens-prod-r3` with `skip_app_build: true`. Azure does not rebuild different source after the tests.
 
@@ -74,7 +75,7 @@ The existing resource stays in place. The workflow changes only how its tested s
 
 ## Failure behavior
 
-- A failed type check, unit test, build, publication gate, browser test, accessibility test, or high-severity audit blocks deployment.
+- A failed type check, unit test, build, publication gate, browser test, 320px visual capture, accessibility test, or high-severity audit blocks deployment.
 - A missing GitHub secret fails the deployment job without changing the live site.
 - A failed Azure upload leaves the previous release available.
 - An inaccessible or non-empty shared repository stops the push until its state is understood. No force option is allowed.
@@ -82,7 +83,7 @@ The existing resource stays in place. The workflow changes only how its tested s
 
 ## Verification
 
-Local tests validate the workflow structure, event boundary, secret reference, exact tested artifact flow, and pinned actions.
+Local tests validate the workflow structure, event boundary, secret reference, 320px visual proof, exact tested artifact flow, and pinned actions.
 
 After pushing:
 

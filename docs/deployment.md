@@ -7,7 +7,7 @@
 - Workflow: `.github/workflows/verify-and-deploy.yml`
 - Backup remote: private Gitea repository named `gitea` in local clones
 
-Pull requests run the full local release gate without receiving the Azure token. A push or manual run on `main` uploads the exact `dist` artifact created by the successful verification job. The workflow never deploys pull requests and does not ask Azure to rebuild the source.
+Pull requests run the full local release gate without receiving the Azure token. The gate includes a 320px visual capture, and GitHub retains those screenshots for seven days. A push or manual run on `main` uploads the exact `dist` artifact created by the successful verification job. The workflow never deploys pull requests and does not ask Azure to rebuild the source.
 
 GitHub stores the Azure deployment token as the repository secret `AZURE_STATIC_WEB_APPS_API_TOKEN`. The value must not appear in Git, documentation, shell output, or issue text.
 

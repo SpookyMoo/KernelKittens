@@ -18,7 +18,7 @@ test("capture desktop and mobile release views", async ({ page }, testInfo) => {
       animations: "disabled"
     });
 
-    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setViewportSize({ width: 320, height: 844 });
     await page.goto(route.path);
     await page.screenshot({
       path: testInfo.outputPath(`mobile-${route.name}.png`),
