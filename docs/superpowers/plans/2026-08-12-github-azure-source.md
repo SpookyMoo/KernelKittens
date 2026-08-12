@@ -72,7 +72,9 @@ describe("GitHub verification and deployment workflow", () => {
 
   it("uses a secret and immutable official action references", () => {
     const workflow = readFileSync(workflowPath, "utf8");
-    const actionRefs = [...workflow.matchAll(/uses:\s+([^\s#]+)/g)].map((match) => match[1]);
+    const actionRefs = [...workflow.matchAll(/uses:\s+([^\s#]+)/g)].flatMap((match) =>
+      match[1] ? [match[1]] : []
+    );
 
     expect(workflow).toContain("secrets.AZURE_STATIC_WEB_APPS_API_TOKEN");
     expect(workflow).not.toContain("pull_request_target:");
@@ -163,7 +165,6 @@ jobs:
           app_location: dist
           output_location: ""
           skip_app_build: true
-          skip_api_build: true
 ```
 
 - [ ] **Step 5: Run the focused and full local gates**
