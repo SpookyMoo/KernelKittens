@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { siteConfig } from "../../src/config/site";
-import { credentials } from "../../src/data/credentials";
+import { competitionResults, verifiedResults } from "../../src/data/results";
 
 describe("public site data", () => {
   it("uses the purchased domain and hides the uncreated CTFtime profile", () => {
@@ -9,22 +9,28 @@ describe("public site data", () => {
     expect(siteConfig.ctfTimeUrl).toBeNull();
   });
 
-  it("does not present expired credentials as current", () => {
-    expect(
-      credentials
-        .filter((item) => item.kind === "current")
-        .map((item) => item.title)
-    ).toEqual(["Google Cybersecurity Professional Certificate"]);
-    expect(credentials.filter((item) => item.kind === "expired")).toHaveLength(2);
+  it("publishes only verified results", () => {
+    expect(verifiedResults.every((result) => result.status === "verified")).toBe(true);
+    expect(verifiedResults.map((result) => result.id)).not.toContain("bushbash-2026");
   });
 
-  it("attributes prior competition proof to the prior team", () => {
-    const result = credentials.find((item) => item.kind === "result");
+  it("keeps the verified prior-team result exact and attributed", () => {
+    const result = verifiedResults.find((item) => item.id === "cyber-apocalypse-2026");
 
-    expect(result?.context).toContain("1337_PwnSp4c3");
-    expect(result?.context).toContain("12th of 6,744 teams");
-    expect(result?.context).toContain("136 of 136 challenges");
-    expect(result?.context).toContain("69,425 points");
+    expect(result).toMatchObject({
+      placement: 12,
+      fieldSize: 6744,
+      solved: 136,
+      totalChallenges: 136,
+      score: 69425,
+      creditedTeam: "1337_PwnSp4c3",
+      attribution: "Member result with a prior team"
+    });
+  });
+
+  it("does not assign an unverified BushBash placement", () => {
+    const result = competitionResults.find((item) => item.id === "bushbash-2026");
+
+    expect(result).toMatchObject({ status: "pending", placement: null });
   });
 });
-
