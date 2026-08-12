@@ -1,0 +1,83 @@
+---
+import CredentialCard from "../components/CredentialCard.astro";
+import { credentials } from "../data/credentials";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const current = credentials.filter((item) => item.kind === "current");
+const expired = credentials.filter((item) => item.kind === "expired");
+const results = credentials.filter((item) => item.kind === "result");
+---
+
+<BaseLayout
+  title="Certifications and results"
+  description="Current credentials, previous credentials, and attributed competition history for Kernel Kittens."
+  canonicalPath="/certifications/"
+>
+  <div class="page-shell">
+    <header class="page-intro">
+      <p class="eyebrow">Evidence records</p>
+      <h1>Certifications and results</h1>
+      <p class="lede">Status matters. Current credentials, expired credentials, and prior-team results are listed separately.</p>
+    </header>
+
+    <section class="records-section" aria-labelledby="current-title">
+      <h2 id="current-title">Current credentials</h2>
+      <div class="credential-grid">
+        {current.map((credential) => <CredentialCard credential={credential} />)}
+      </div>
+    </section>
+
+    <section class="records-section" aria-labelledby="previous-title">
+      <h2 id="previous-title">Previous credentials</h2>
+      <p class="records-section__note">These credentials were held previously and are not represented as active.</p>
+      <div class="credential-grid credential-grid--two">
+        {expired.map((credential) => <CredentialCard credential={credential} />)}
+      </div>
+    </section>
+
+    <section class="records-section" aria-labelledby="proof-title">
+      <h2 id="proof-title">Competition proof</h2>
+      <p class="records-section__note">This result belongs to a Kernel Kittens member's earlier team, not to Kernel Kittens.</p>
+      <div class="credential-grid">
+        {results.map((credential) => <CredentialCard credential={credential} />)}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .records-section {
+    padding-block: 0 4.5rem;
+  }
+
+  .records-section + .records-section {
+    padding-top: 4.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .records-section h2 {
+    font-size: clamp(1.7rem, 4vw, 2.7rem);
+  }
+
+  .records-section__note {
+    max-width: 44rem;
+    color: var(--ink-muted);
+  }
+
+  .credential-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 35rem);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .credential-grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 44rem) {
+    .credential-grid--two {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -6,6 +6,7 @@
   --cobalt: #315cf4;
   --cobalt-deep: #2446c8;
   --signal: #f05a47;
+  --signal-text: #a93427;
   --solder: #9bb2c6;
   --surface: #ffffff;
   --surface-raised: #ffffff;
@@ -396,7 +397,7 @@ h3 {
 }
 
 .empty-state__index {
-  color: var(--signal);
+  color: var(--signal-text);
   font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
   font-size: 0.9rem;
   font-weight: 800;
@@ -509,6 +510,7 @@ h3 {
     --cobalt: #7898ff;
     --cobalt-deep: #9bb1ff;
     --signal: #ff7b68;
+    --signal-text: #ff9b8e;
     --solder: #526b80;
     --surface: #111f2e;
     --surface-raised: #152638;

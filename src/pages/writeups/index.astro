@@ -1,0 +1,51 @@
+---
+import { getCollection } from "astro:content";
+import WriteupCard from "../../components/WriteupCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isPublicWriteup } from "../../lib/publication";
+
+const writeups = (await getCollection("writeups"))
+  .filter((entry) => isPublicWriteup(entry.data))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+---
+
+<BaseLayout
+  title="Write-ups"
+  description="Publication-safe CTF write-ups from Kernel Kittens."
+  canonicalPath="/writeups/"
+>
+  <div class="page-shell">
+    <header class="page-intro">
+      <p class="eyebrow">Public archive</p>
+      <h1>Write-ups</h1>
+      <p class="lede">Useful technical work, released only when the event rules allow it.</p>
+    </header>
+
+    <section class="section" aria-label="Published write-ups">
+      {writeups.length > 0 ? (
+        <div class="writeup-list">
+          {writeups.map((entry) => <WriteupCard entry={entry} />)}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <span class="empty-state__index" aria-hidden="true">00</span>
+          <div>
+            <h2>No public write-ups yet.</h2>
+            <p>Seven confirmed BushBash solves are ready, but the event rules still block publication. They stay private until that changes.</p>
+          </div>
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .writeup-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .empty-state h2 {
+    font-size: clamp(1.45rem, 4vw, 2.35rem);
+  }
+</style>
