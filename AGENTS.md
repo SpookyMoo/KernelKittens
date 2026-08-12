@@ -6,7 +6,8 @@
 - Never add embargoed challenge text, flags, private draft markers, personal identities, credential IDs, or local archive paths.
 - A write-up needs `status: public` and a specific `publicationBasis` before it can generate a route.
 - Attribute the 2026 Cyber Apocalypse result to the prior team `1337_PwnSp4c3`.
-- Label expired credentials as expired. Do not imply that they are active.
+- Render only verified competition results. BushBash stays pending with no placement until primary evidence is inspected.
+- Do not add a public certification gallery unless Moo directly changes that decision.
 
 ## Copy and interface
 
@@ -17,4 +18,11 @@
 
 ## Required release checks
 
-Run `npm test`, `npm audit`, and `git diff --check`. Inspect desktop and 320-pixel mobile screenshots before deployment. Critical or serious accessibility findings block release.
+Run `npm test`, `npm audit`, `git diff --check`, and `go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 .github/workflows/verify-and-deploy.yml`. Inspect desktop and 320-pixel mobile screenshots before deployment. Critical or serious accessibility findings block release.
+
+## Repository and deployment
+
+- GitHub `romilp619/KernelKittens` on `main` is the production source after migration.
+- Keep the private Gitea remote as a backup. Do not force-push or overwrite shared GitHub history.
+- GitHub Actions deploys the exact tested `dist` artifact to `swa-kernel-kittens-prod-r3`.
+- The Azure token belongs only in the GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.

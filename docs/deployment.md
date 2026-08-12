@@ -1,5 +1,16 @@
 # Production deployment
 
+## Source
+
+- Canonical repository: `https://github.com/romilp619/KernelKittens`
+- Production branch: `main`
+- Workflow: `.github/workflows/verify-and-deploy.yml`
+- Backup remote: private Gitea repository named `gitea` in local clones
+
+Pull requests run the full local release gate without receiving the Azure token. A push or manual run on `main` uploads the exact `dist` artifact created by the successful verification job. The workflow never deploys pull requests and does not ask Azure to rebuild the source.
+
+GitHub stores the Azure deployment token as the repository secret `AZURE_STATIC_WEB_APPS_API_TOKEN`. The value must not appear in Git, documentation, shell output, or issue text.
+
 ## Azure
 
 - Resource group: `rg-kernel-kittens-web-prod`
@@ -9,7 +20,7 @@
 - Generated hostname: `ashy-rock-0ceff091e.7.azurestaticapps.net`
 - Production branch: `main`
 
-The repository stays private in Gitea. Azure receives the tested contents of `dist` through the pinned Static Web Apps CLI. Deployment credentials stay outside Git and are loaded only for the deployment process.
+Azure receives the tested contents of `dist` from GitHub Actions through the official Static Web Apps deployment action. Every action is pinned to a full commit SHA. Repository visibility stays under the GitHub owner's control and is not changed by the deployment workflow.
 
 Run the full release checks before uploading:
 
@@ -17,8 +28,9 @@ Run the full release checks before uploading:
 npm ci
 npm test
 npm audit
-npm run deploy:azure
 ```
+
+Pushing a verified commit to GitHub `main` starts production deployment. The existing `npm run deploy:azure` command remains available for recovery from a trusted local checkout, but it is not the normal release path.
 
 ## DNS
 
@@ -35,5 +47,7 @@ The intended production records are:
 Do not remove Azure ownership TXT records while a hostname is validating. Confirm both custom hostnames are `Ready` in Azure before changing traffic records. After a DNS change, check each authoritative name server, public DNS, HTTPS, the custom 404 page, and the security headers.
 
 ## Rollback
+
+For a bad site release, revert the bad commit on GitHub `main`. The workflow tests and deploys the reverted tree as a new auditable release. Do not force-push the shared branch.
 
 If the Azure origin or custom certificate fails, point the apex `ALIAS` and wildcard parking record back to `pixie.porkbun.com`. This restores the registrar parking page while Azure is repaired.
