@@ -1,6 +1,8 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import MotionStage from "../components/MotionStage.astro";
+import ResultScorecard from "../components/ResultScorecard.astro";
 import { verifiedResults } from "../data/results";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
@@ -9,71 +11,24 @@ import { verifiedResults } from "../data/results";
   canonicalPath="/results/"
 >
   <div class="page-shell">
-    <header class="page-intro">
+    <header class="page-intro page-intro--results">
       <p class="eyebrow">Scoreboard</p>
       <h1>Results</h1>
       <p class="lede">Placements we can prove. Prior-team work stays labeled as prior-team work.</p>
     </header>
 
-    <section class="section" aria-label="Verified competition results">
-      <div class="result-list">
-        {verifiedResults.map((result) => (
-          <article class="result-record">
-            <p class="status-label">{result.attribution}</p>
-            <h2>{result.event} {result.year}</h2>
-            <dl>
-              <div>
-                <dt>Placement</dt>
-                <dd>{result.placement} / {result.fieldSize.toLocaleString("en-US")}</dd>
-              </div>
-              <div>
-                <dt>Solved</dt>
-                <dd>{result.solved} / {result.totalChallenges}</dd>
-              </div>
-              <div>
-                <dt>Score</dt>
-                <dd>{result.score.toLocaleString("en-US")}</dd>
-              </div>
-            </dl>
-            <p>Credited to <strong>{result.creditedTeam}</strong>.</p>
-          </article>
-        ))}
-      </div>
-    </section>
+    <div class="results-layout">
+      <section class="result-list" aria-label="Verified competition results">
+        {verifiedResults.map((result) => <ResultScorecard result={result} />)}
+      </section>
+
+      <aside class="results-cutdown" aria-label="Motion graphics cutdown">
+        <MotionStage
+          variant="square"
+          title="Kernel Kittens square motion graphics static keyframe"
+          caption="Square cutdown reserved for result reels and team posts."
+        />
+      </aside>
+    </div>
   </div>
 </BaseLayout>
-
-<style>
-  .result-list {
-    display: grid;
-    gap: 1rem;
-  }
-
-  .result-record {
-    padding: 1.5rem;
-    border: 1px solid var(--line);
-    background: var(--surface);
-  }
-
-  .result-record dl {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .result-record dt {
-    color: var(--ink-muted);
-  }
-
-  .result-record dd {
-    margin: 0;
-    font-size: 1.35rem;
-    font-weight: 850;
-  }
-
-  @media (max-width: 36rem) {
-    .result-record dl {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

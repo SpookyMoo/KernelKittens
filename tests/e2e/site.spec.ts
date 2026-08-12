@@ -6,7 +6,10 @@ test("home exposes persistent navigation and a working skip link", async ({ page
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Kernel Kittens" })
+    page.getByRole("heading", {
+      level: 1,
+      name: "We play CTFs. The scoreboard can do the talking."
+    })
   ).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
 
@@ -16,6 +19,16 @@ test("home exposes persistent navigation and a working skip link", async ({ page
     "href",
     "#main-content"
   );
+});
+
+test("home reserves an accessible static motion stage without runtime media", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(
+    page.getByRole("figure", { name: "Kernel Kittens motion graphics static keyframe" })
+  ).toBeVisible();
+  await expect(page.getByText("Static keyframe", { exact: true })).toBeVisible();
+  await expect(page.locator("video, canvas, script")).toHaveCount(0);
 });
 
 for (const route of publicRoutes) {
@@ -40,6 +53,8 @@ test("results show exact verified metrics and prior-team attribution", async ({ 
   await expect(page.getByText("69,425", { exact: true })).toBeVisible();
   await expect(page.getByText("Member result with a prior team", { exact: true })).toBeVisible();
   await expect(page.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(page.locator("[data-result-status='verified']")).toHaveCount(1);
+  await expect(page.locator("[data-result-status='pending']")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(/Google Cybersecurity|CCNA|CompTIA/i);
   await expect(page.locator("body")).not.toContainText(/BushBash.*(?:1st|first)/i);
 });
@@ -99,8 +114,8 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
   await page.goto("/");
 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Write-ups" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Results" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Write-ups", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Results", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
 
