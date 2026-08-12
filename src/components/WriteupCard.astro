@@ -27,17 +27,18 @@ const dateLabel = entry.data.publishedAt.toLocaleDateString("en-US", {
 <style>
   .writeup-card {
     padding: clamp(1.4rem, 4vw, 2.25rem);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
+    border: 2px solid var(--line);
+    border-top: 0.65rem solid var(--cobalt);
     background: var(--surface);
+    box-shadow: 0.6rem 0.6rem 0 var(--score);
   }
 
   .writeup-card__meta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem 1rem;
-    color: var(--cobalt-deep);
-    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    color: var(--cobalt-strong);
+    font-family: var(--font-data);
     font-size: 0.78rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -58,7 +59,7 @@ const dateLabel = entry.data.publishedAt.toLocaleDateString("en-US", {
 
   time {
     color: var(--ink-muted);
-    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    font-family: var(--font-data);
     font-size: 0.82rem;
   }
 </style>

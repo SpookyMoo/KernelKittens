@@ -31,6 +31,12 @@ test("home reserves an accessible static motion stage without runtime media", as
   await expect(page.locator("video, canvas, script")).toHaveCount(0);
 });
 
+test("display headings wrap only between words", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("overflow-wrap", "normal");
+});
+
 for (const route of publicRoutes) {
   test(`${route} has one main landmark and a route home`, async ({ page }) => {
     await page.goto(route);
@@ -116,7 +122,15 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Write-ups", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Results", exact: true })).toBeVisible();
+  await expect(page.locator(".motion-stage__plate")).toHaveCSS("aspect-ratio", "16 / 9");
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+});
+
+test("reduced motion keeps the storyboard static", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await expect(page.locator(".motion-stage__playhead")).toHaveCSS("animation-name", "none");
 });
 
 test("the release makes no third-party requests and loads without console errors", async ({ page }) => {
