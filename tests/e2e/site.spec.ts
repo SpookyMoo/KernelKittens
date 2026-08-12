@@ -63,11 +63,23 @@ test("every visible internal link resolves", async ({ page, request }) => {
   }
 });
 
-test("the custom 404 page provides useful recovery links", async ({ page }) => {
-  await page.goto("/404.html");
+test("unknown routes use the custom 404 page", async ({ page }) => {
+  const response = await page.goto("/route-that-does-not-exist");
 
+  expect(response?.status()).toBe(404);
   await expect(page.getByRole("heading", { level: 1, name: "That page is not here." })).toBeVisible();
   await expect(page.getByRole("link", { name: "Back home" })).toHaveAttribute("href", "/");
+});
+
+test("the browser receives the restrictive release policy", async ({ page }) => {
+  const response = await page.goto("/certifications/");
+  const headers = response?.headers() ?? {};
+
+  expect(headers["content-security-policy"]).toContain("default-src 'self'");
+  expect(headers["content-security-policy"]).toContain("style-src 'self'");
+  expect(headers["permissions-policy"]).toContain("camera=()");
+  await expect(page.locator("style")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Certifications and results" })).toBeVisible();
 });
 
 test("primary navigation stays visible at a narrow mobile width", async ({ page }) => {
@@ -92,7 +104,10 @@ test("the release makes no third-party requests and loads without console errors
     if (message.type() === "error") consoleErrors.push(message.text());
   });
 
-  for (const route of publicRoutes) await page.goto(route);
+  for (const route of publicRoutes) {
+    await page.goto(route);
+    await expect(page.locator("style"), `${route} must not contain inline styles`).toHaveCount(0);
+  }
 
   expect([...new Set(thirdPartyRequests)]).toEqual([]);
   expect(consoleErrors).toEqual([]);

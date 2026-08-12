@@ -9,12 +9,29 @@ const patterns = JSON.parse(await readFile(patternPath, "utf8")).map((item) => (
   pattern: new RegExp(item.source, item.flags)
 }));
 const sourceOnly = process.argv.includes("--source-only");
-const roots = [resolve(repoRoot, "src/content/writeups")];
-const readableExtensions = new Set([".css", ".html", ".js", ".json", ".md", ".txt", ".xml"]);
+const scanRootIndex = process.argv.indexOf("--scan-root");
+const customScanRoot = scanRootIndex >= 0 ? process.argv[scanRootIndex + 1] : undefined;
+const roots = customScanRoot
+  ? [resolve(repoRoot, customScanRoot)]
+  : [resolve(repoRoot, "src/content/writeups")];
+const readableExtensions = new Set([
+  ".css",
+  ".html",
+  ".js",
+  ".json",
+  ".map",
+  ".md",
+  ".svg",
+  ".txt",
+  ".webmanifest",
+  ".xml",
+  ".yaml",
+  ".yml"
+]);
 const violations = [];
 let filesScanned = 0;
 
-if (!sourceOnly) {
+if (!sourceOnly && !customScanRoot) {
   roots.push(resolve(repoRoot, "dist"));
 }
 

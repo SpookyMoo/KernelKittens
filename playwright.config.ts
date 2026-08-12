@@ -17,11 +17,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: "npm run preview -- --host 127.0.0.1 --port 4321",
-    env: {
-      ...process.env,
-      ASTRO_PREVIEW_BACKGROUND: "0"
-    },
+    command: "node scripts/serve-release.mjs",
     url: "http://127.0.0.1:4321",
     reuseExistingServer: false,
     timeout: 120_000
