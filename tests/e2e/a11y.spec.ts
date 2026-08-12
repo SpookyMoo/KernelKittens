@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const route of ["/", "/writeups/", "/certifications/", "/accessibility/"]) {
+  for (const route of ["/", "/results/", "/writeups/", "/accessibility/"]) {
     test(`${route} has no blocking ${colorScheme} mode violations`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       await page.goto(route);

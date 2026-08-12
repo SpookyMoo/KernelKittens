@@ -51,6 +51,14 @@ function applyHeaders(response, pathname) {
   }
 }
 
+function findRedirect(pathname) {
+  return config.routes?.find((route) => {
+    if (!route.redirect) return false;
+    if (route.route.endsWith("*")) return pathname.startsWith(route.route.slice(0, -1));
+    return pathname === route.route;
+  });
+}
+
 async function readableFile(target) {
   if (!target) return null;
 
@@ -65,6 +73,13 @@ async function readableFile(target) {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", `http://${host}:${port}`);
   applyHeaders(response, url.pathname);
+
+  const redirect = findRedirect(url.pathname);
+  if (redirect) {
+    response.writeHead(redirect.statusCode ?? 302, { Location: redirect.redirect });
+    response.end();
+    return;
+  }
 
   let status = 200;
   let target = await readableFile(safeTarget(url.pathname));

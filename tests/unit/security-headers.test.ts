@@ -15,6 +15,11 @@ describe("Azure response policy", () => {
     expect(config.globalHeaders["Permissions-Policy"]).toContain("camera=()");
     expect(config.globalHeaders["Strict-Transport-Security"]).toContain("max-age=");
     expect(config.responseOverrides["404"].rewrite).toBe("/404.html");
+    expect(config.routes).toContainEqual({
+      route: "/certifications/*",
+      redirect: "/results/",
+      statusCode: 301
+    });
   });
 
   it("externalizes Astro styles so the CSP can load every layout", () => {

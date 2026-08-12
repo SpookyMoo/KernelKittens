@@ -2,8 +2,8 @@ import { test } from "@playwright/test";
 
 const routes = [
   { path: "/", name: "home" },
+  { path: "/results/", name: "results" },
   { path: "/writeups/", name: "writeups" },
-  { path: "/certifications/", name: "certifications" },
   { path: "/accessibility/", name: "accessibility" }
 ];
 

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const publicRoutes = ["/", "/writeups/", "/certifications/", "/accessibility/"];
+const publicRoutes = ["/", "/results/", "/writeups/", "/accessibility/"];
 
 test("home exposes persistent navigation and a working skip link", async ({ page }) => {
   await page.goto("/");
@@ -30,13 +30,25 @@ for (const route of publicRoutes) {
   });
 }
 
-test("credential records separate current, expired, and prior-team proof", async ({ page }) => {
-  await page.goto("/certifications/");
+test("results show exact verified metrics and prior-team attribution", async ({ page }) => {
+  await page.goto("/results/");
 
-  await expect(page.getByText("Current credential", { exact: true })).toHaveCount(1);
-  await expect(page.getByText("Previous credential - expired", { exact: true })).toHaveCount(2);
-  await expect(page.getByText("Member competition result", { exact: true })).toHaveCount(1);
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+  await expect(page.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
+  await expect(page.getByText("12 / 6,744", { exact: true })).toBeVisible();
+  await expect(page.getByText("136 / 136", { exact: true })).toBeVisible();
+  await expect(page.getByText("69,425", { exact: true })).toBeVisible();
+  await expect(page.getByText("Member result with a prior team", { exact: true })).toBeVisible();
   await expect(page.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(page.locator("body")).not.toContainText(/Google Cybersecurity|CCNA|CompTIA/i);
+  await expect(page.locator("body")).not.toContainText(/BushBash.*(?:1st|first)/i);
+});
+
+test("the retired certification route redirects to results", async ({ request }) => {
+  const response = await request.get("/certifications/", { maxRedirects: 0 });
+
+  expect(response.status()).toBe(301);
+  expect(response.headers().location).toBe("/results/");
 });
 
 test("write-up archive explains the publication hold without leaking flags", async ({ page }) => {
@@ -72,14 +84,14 @@ test("unknown routes use the custom 404 page", async ({ page }) => {
 });
 
 test("the browser receives the restrictive release policy", async ({ page }) => {
-  const response = await page.goto("/certifications/");
+  const response = await page.goto("/results/");
   const headers = response?.headers() ?? {};
 
   expect(headers["content-security-policy"]).toContain("default-src 'self'");
   expect(headers["content-security-policy"]).toContain("style-src 'self'");
   expect(headers["permissions-policy"]).toContain("camera=()");
   await expect(page.locator("style")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Certifications and results" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
 });
 
 test("primary navigation stays visible at a narrow mobile width", async ({ page }) => {
@@ -88,7 +100,7 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Write-ups" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Certifications" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Results" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
 

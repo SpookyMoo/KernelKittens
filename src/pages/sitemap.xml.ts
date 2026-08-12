@@ -4,7 +4,7 @@ import { isPublicWriteup } from "../lib/publication";
 
 export const prerender = true;
 
-const fixedPaths = ["/", "/writeups/", "/certifications/", "/accessibility/"];
+const fixedPaths = ["/", "/results/", "/writeups/", "/accessibility/"];
 
 export async function GET(): Promise<Response> {
   const writeups = (await getCollection("writeups")).filter((entry) =>
