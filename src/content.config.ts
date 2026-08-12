@@ -18,11 +18,10 @@ const writeups = defineCollection({
     status: z.literal("public"),
     publicationBasis: z.string().min(10),
     featured: z.boolean().default(false),
-    eventUrl: z.string().url().optional(),
-    sourceUrl: z.string().url().optional(),
-    ctfTimeUrl: z.string().url().optional()
+    eventUrl: z.url().optional(),
+    sourceUrl: z.url().optional(),
+    ctfTimeUrl: z.url().optional()
   })
 });
 
 export const collections = { writeups };
-

@@ -79,3 +79,22 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
   await expect(page.getByRole("link", { name: "Certifications" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
+
+test("the release makes no third-party requests and loads without console errors", async ({ page }) => {
+  const thirdPartyRequests: string[] = [];
+  const consoleErrors: string[] = [];
+
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.origin !== "http://127.0.0.1:4321") thirdPartyRequests.push(url.origin);
+  });
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+
+  for (const route of publicRoutes) await page.goto(route);
+
+  expect([...new Set(thirdPartyRequests)]).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+  await expect(page.locator("script")).toHaveCount(0);
+});
