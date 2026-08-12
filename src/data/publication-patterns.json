@@ -1,0 +1,27 @@
+[
+  {
+    "label": "private draft marker",
+    "source": "private draft|do not publish|full detail \\(private\\)",
+    "flags": "i"
+  },
+  {
+    "label": "non-public write-up status",
+    "source": "^status:\\s*(?!public\\s*$).+",
+    "flags": "im"
+  },
+  {
+    "label": "BushBash flag",
+    "source": "bushbash\\{[^}]+\\}",
+    "flags": "i"
+  },
+  {
+    "label": "HTB flag",
+    "source": "HTB\\{[^}]+\\}",
+    "flags": "i"
+  },
+  {
+    "label": "local Windows path",
+    "source": "[A-Z]:\\\\Users\\\\[^\\\\]+\\\\",
+    "flags": "i"
+  }
+]
