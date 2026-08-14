@@ -31,6 +31,14 @@ test("home reserves an accessible static motion stage without runtime media", as
   await expect(page.locator("video, canvas, script")).toHaveCount(0);
 });
 
+test("home keeps Cyber Apocalypse as the featured result", async ({ page }) => {
+  await page.goto("/");
+  const featured = page.locator(".result-scorecard--featured");
+
+  await expect(featured.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
+  await expect(featured).not.toContainText("BushBash");
+});
+
 test("display headings wrap only between words", async ({ page }) => {
   await page.goto("/");
 
@@ -51,18 +59,26 @@ for (const route of publicRoutes) {
 
 test("results show exact verified metrics and prior-team attribution", async ({ page }) => {
   await page.goto("/results/");
+  const cyberApocalypse = page.locator("[data-result-status='verified']").filter({
+    hasText: "Cyber Apocalypse 2026"
+  });
+  const bushBash = page.locator("[data-result-status='verified']").filter({
+    hasText: "BushBash CTF 2026"
+  });
 
   await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
-  await expect(page.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
-  await expect(page.getByText("12 / 6,744", { exact: true })).toBeVisible();
-  await expect(page.getByText("136 / 136", { exact: true })).toBeVisible();
-  await expect(page.getByText("69,425", { exact: true })).toBeVisible();
-  await expect(page.getByText("Member result with a prior team", { exact: true })).toBeVisible();
-  await expect(page.getByText(/1337_PwnSp4c3/)).toBeVisible();
-  await expect(page.locator("[data-result-status='verified']")).toHaveCount(1);
+  await expect(cyberApocalypse.getByText("12 / 6,744", { exact: true })).toBeVisible();
+  await expect(cyberApocalypse.getByText("136 / 136", { exact: true })).toBeVisible();
+  await expect(cyberApocalypse.getByText("69,425", { exact: true })).toBeVisible();
+  await expect(cyberApocalypse.getByText("Member result with a prior team", { exact: true })).toBeVisible();
+  await expect(cyberApocalypse.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(bushBash.getByText("1 / 994", { exact: true })).toBeVisible();
+  await expect(bushBash.getByText("Global", { exact: true })).toBeVisible();
+  await expect(bushBash.getByText("Member result with a prior team", { exact: true })).toBeVisible();
+  await expect(bushBash.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(page.locator("[data-result-status='verified']")).toHaveCount(2);
   await expect(page.locator("[data-result-status='pending']")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(/Google Cybersecurity|CCNA|CompTIA/i);
-  await expect(page.locator("body")).not.toContainText(/BushBash.*(?:1st|first)/i);
 });
 
 test("the retired certification route redirects to results", async ({ request }) => {

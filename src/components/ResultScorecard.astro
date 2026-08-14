@@ -7,6 +7,20 @@ interface Props {
 }
 
 const { result, featured = false } = Astro.props;
+
+const metrics = [
+  {
+    label: "Placement",
+    value: `${result.placement} / ${result.fieldSize.toLocaleString("en-US")}`
+  },
+  ...(result.solved !== null && result.totalChallenges !== null
+    ? [{ label: "Solved", value: `${result.solved} / ${result.totalChallenges}` }]
+    : []),
+  ...(result.score !== null
+    ? [{ label: "Score", value: result.score.toLocaleString("en-US") }]
+    : []),
+  ...(result.division !== null ? [{ label: "Division", value: result.division }] : [])
+];
 ---
 
 <article
@@ -30,18 +44,12 @@ const { result, featured = false } = Astro.props;
     </div>
 
     <dl class="result-scorecard__metrics">
-      <div>
-        <dt>Placement</dt>
-        <dd>{result.placement} / {result.fieldSize.toLocaleString("en-US")}</dd>
-      </div>
-      <div>
-        <dt>Solved</dt>
-        <dd>{result.solved} / {result.totalChallenges}</dd>
-      </div>
-      <div>
-        <dt>Score</dt>
-        <dd>{result.score.toLocaleString("en-US")}</dd>
-      </div>
+      {metrics.map((metric) => (
+        <div>
+          <dt>{metric.label}</dt>
+          <dd>{metric.value}</dd>
+        </div>
+      ))}
     </dl>
   </div>
 </article>

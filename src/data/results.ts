@@ -11,9 +11,10 @@ export interface VerifiedCompetitionResult extends ResultBase {
   placement: number;
   placementLabel: string;
   fieldSize: number;
-  solved: number;
-  totalChallenges: number;
-  score: number;
+  solved: number | null;
+  totalChallenges: number | null;
+  score: number | null;
+  division: string | null;
 }
 
 export interface PendingCompetitionResult extends ResultBase {
@@ -24,6 +25,7 @@ export interface PendingCompetitionResult extends ResultBase {
   solved: null;
   totalChallenges: null;
   score: null;
+  division: null;
 }
 
 export type CompetitionResult = VerifiedCompetitionResult | PendingCompetitionResult;
@@ -40,6 +42,7 @@ export const competitionResults = [
     solved: 136,
     totalChallenges: 136,
     score: 69425,
+    division: null,
     creditedTeam: "1337_PwnSp4c3",
     attribution: "Member result with a prior team"
   },
@@ -47,15 +50,16 @@ export const competitionResults = [
     id: "bushbash-2026",
     event: "BushBash CTF",
     year: 2026,
-    status: "pending",
-    placement: null,
-    placementLabel: null,
-    fieldSize: null,
+    status: "verified",
+    placement: 1,
+    placementLabel: "1st",
+    fieldSize: 994,
     solved: null,
     totalChallenges: null,
     score: null,
-    creditedTeam: "Kernel Kittens",
-    attribution: "Kernel Kittens entry"
+    division: "Global",
+    creditedTeam: "1337_PwnSp4c3",
+    attribution: "Member result with a prior team"
   }
 ] as const satisfies readonly CompetitionResult[];
 
