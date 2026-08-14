@@ -24,5 +24,6 @@ Run `npm test`, `npm audit`, `git diff --check`, and `go run github.com/rhysd/ac
 
 - GitHub `SpookyMoo/KernelKittens` on `main` is the production source.
 - Keep the private Gitea remote as a backup. Do not force-push or overwrite shared GitHub history.
-- GitHub Actions deploys the exact tested `dist` artifact to GitHub Pages.
-- `public/CNAME` must remain `kernelkittens.team` unless Moo explicitly changes the public domain.
+- GitHub Actions deploys the exact tested `dist` artifact to Azure Static Web App `swa-kernel-kittens-prod-r3`.
+- The Azure token must exist only as GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN`. Never print or commit it.
+- `kernelkittens.team` and `www.kernelkittens.team` are Azure custom domains. Keep Porkbun authoritative and preserve unrelated DNS records.
