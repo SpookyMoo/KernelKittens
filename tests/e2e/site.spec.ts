@@ -1,6 +1,13 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
 
 const publicRoutes = ["/", "/results/", "/writeups/", "/accessibility/"];
+const bushBashMetrics = ["1 / 994", "28 / 28", "5,997", "Open - International"];
+
+async function expectBushBashMetrics(card: Locator): Promise<void> {
+  for (const metric of bushBashMetrics) {
+    await expect(card.getByText(metric, { exact: true })).toBeVisible();
+  }
+}
 
 test("home exposes persistent navigation and a working skip link", async ({ page }) => {
   await page.goto("/");
@@ -42,7 +49,7 @@ test("home board shows both verified results with Cyber Apocalypse featured", as
   await expect(featured.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
   await expect(featured).not.toContainText("BushBash");
   await expect(cards.nth(1).getByText("BushBash CTF 2026", { exact: true })).toBeVisible();
-  await expect(cards.nth(1).getByText("1 / 994", { exact: true })).toBeVisible();
+  await expectBushBashMetrics(cards.nth(1));
 });
 
 test("display headings wrap only between words", async ({ page }) => {
@@ -78,13 +85,30 @@ test("results show exact verified metrics and prior-team attribution", async ({ 
   await expect(cyberApocalypse.getByText("69,425", { exact: true })).toBeVisible();
   await expect(cyberApocalypse.getByText("Member result with a prior team", { exact: true })).toBeVisible();
   await expect(cyberApocalypse.getByText(/1337_PwnSp4c3/)).toBeVisible();
-  await expect(bushBash.getByText("1 / 994", { exact: true })).toBeVisible();
-  await expect(bushBash.getByText("Global", { exact: true })).toBeVisible();
+  await expectBushBashMetrics(bushBash);
   await expect(bushBash.getByText("Member result with a prior team", { exact: true })).toBeVisible();
   await expect(bushBash.getByText(/1337_PwnSp4c3/)).toBeVisible();
   await expect(page.locator("[data-result-status='verified']")).toHaveCount(2);
   await expect(page.locator("[data-result-status='pending']")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(/Google Cybersecurity|CCNA|CompTIA/i);
+});
+
+test("BushBash division stays inside its Results card", async ({ page }) => {
+  for (const width of [1440, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/results/");
+
+    const card = page.locator("[data-result-status='verified']").filter({
+      hasText: "BushBash CTF 2026"
+    });
+    const division = card.getByText("Open - International", { exact: true });
+    const dimensions = await division.evaluate((element) => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth
+    }));
+
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+  }
 });
 
 test("the retired certification route redirects to results", async ({ request }) => {

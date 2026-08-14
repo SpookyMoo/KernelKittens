@@ -43,9 +43,9 @@ const metrics = [
       </div>
     </div>
 
-    <dl class="result-scorecard__metrics">
+    <dl class:list={["result-scorecard__metrics", { "result-scorecard__metrics--with-division": result.division !== null }]}>
       {metrics.map((metric) => (
-        <div>
+        <div data-metric={metric.label.toLowerCase()}>
           <dt>{metric.label}</dt>
           <dd>{metric.value}</dd>
         </div>
