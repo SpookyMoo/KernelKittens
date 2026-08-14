@@ -123,6 +123,20 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
   await expect(page.getByRole("link", { name: "Write-ups", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Results", exact: true })).toBeVisible();
   await expect(page.locator(".motion-stage__plate")).toHaveCSS("aspect-ratio", "16 / 9");
+  const overflowingElements = await page.evaluate(() =>
+    [...document.querySelectorAll("*")]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          element: `${element.tagName.toLowerCase()}.${element.className}`,
+          left: rect.left,
+          right: rect.right,
+        };
+      })
+      .filter(({ left, right }) => left < -0.5 || right > window.innerWidth + 0.5),
+  );
+
+  expect(overflowingElements).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
 
