@@ -12,10 +12,11 @@ Bring the BushBash scorecard to the same summary detail as Cyber Apocalypse usin
 - Division: `Open - International`
 - Credit remains `1337_PwnSp4c3` with the existing prior-team attribution.
 
-The 28-solve total is supported by both the 28 supplied challenge entries and the roster totals of 17, 7, 4, 0, and 0. The public site will show aggregate result metrics only. It will not add the member roster or challenge-by-challenge solver history.
+The supplied event scoreboard supports these aggregate values. The public site will not add member or challenge-level history.
 
 ## Verification
 
 - Unit coverage must require the exact stored metrics.
 - Browser coverage must require all four rendered BushBash metrics on both result surfaces.
+- Browser coverage must prove the division value does not overflow at desktop or 320-pixel widths.
 - The full build, publication boundary, browser, accessibility, and visual gates must pass before release.

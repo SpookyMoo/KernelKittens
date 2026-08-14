@@ -38,10 +38,10 @@ describe("public site data", () => {
       placement: 1,
       placementLabel: "1st",
       fieldSize: 994,
-      solved: null,
-      totalChallenges: null,
-      score: null,
-      division: "Global",
+      solved: 28,
+      totalChallenges: 28,
+      score: 5997,
+      division: "Open - International",
       creditedTeam: "1337_PwnSp4c3",
       attribution: "Member result with a prior team"
     });

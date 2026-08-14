@@ -28,17 +28,17 @@
 - Consumes: the existing `VerifiedCompetitionResult` fields
 - Produces: a BushBash record with `solved: 28`, `totalChallenges: 28`, `score: 5997`, and `division: "Open - International"`
 
-- [ ] **Step 1: Write failing unit and browser expectations**
+- [x] **Step 1: Write failing unit and browser expectations**
 
 Require the exact four BushBash values in the data test. Require `28 / 28`, `5,997`, and `Open - International` in the existing homepage and Results page scorecard assertions.
 
-- [ ] **Step 2: Verify the tests fail for the missing metrics**
+- [x] **Step 2: Verify the tests fail for the missing metrics**
 
 Run `npm run test:unit -- tests/unit/site-data.test.ts`, then build and run `npx playwright test tests/e2e/site.spec.ts -g "home board|results show exact"`.
 
 Expected: failures showing null values and missing rendered text.
 
-- [ ] **Step 3: Update the result record**
+- [x] **Step 3: Update the result record**
 
 Set the BushBash fields in `src/data/results.ts` to:
 
@@ -49,12 +49,12 @@ score: 5997,
 division: "Open - International",
 ```
 
-- [ ] **Step 4: Verify focused and full gates**
+- [x] **Step 4: Verify focused and full gates**
 
 Run the focused unit and browser tests, then `npm test`, `npm audit --audit-level=high`, and `git diff --check`.
 
-Expected: 19 unit tests, 17 browser tests, 8 accessibility tests, and 1 visual test pass with no high-severity dependency finding or diff error.
+Expected: 19 unit tests, 18 browser tests including desktop and 320-pixel overflow coverage, 8 accessibility tests, and 1 visual test pass with no high-severity dependency finding or diff error.
 
-- [ ] **Step 5: Inspect and commit**
+- [x] **Step 5: Inspect and commit**
 
 Inspect fresh desktop and mobile homepage captures, verify the public diff contains no roster or challenge history, and commit the change.

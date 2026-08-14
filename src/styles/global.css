@@ -755,6 +755,10 @@ h3 {
   grid-template-rows: none;
 }
 
+.result-list .result-scorecard__metrics--with-division {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .result-list .result-scorecard__metrics > div {
   display: block;
   border-right: 1px solid var(--line);
@@ -767,6 +771,11 @@ h3 {
 
 .result-list .result-scorecard__metrics dd {
   margin-top: 0.55rem;
+}
+
+.result-list .result-scorecard__metrics--with-division [data-metric="division"] {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
 }
 
 .results-cutdown {
@@ -935,6 +944,14 @@ h3 {
 
   .result-list .result-scorecard__metrics > div:last-child {
     border-bottom: 0;
+  }
+
+  .result-list .result-scorecard__metrics--with-division [data-metric="division"] {
+    border-top: 0;
+  }
+
+  .result-list .result-scorecard__metrics--with-division [data-metric="division"] dd {
+    font-size: 1.625rem;
   }
 
   .result-list .result-scorecard__metrics dd {
