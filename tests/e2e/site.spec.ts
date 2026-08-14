@@ -31,12 +31,18 @@ test("home reserves an accessible static motion stage without runtime media", as
   await expect(page.locator("video, canvas, script")).toHaveCount(0);
 });
 
-test("home keeps Cyber Apocalypse as the featured result", async ({ page }) => {
+test("home board shows both verified results with Cyber Apocalypse featured", async ({ page }) => {
   await page.goto("/");
-  const featured = page.locator(".result-scorecard--featured");
+  const board = page.getByRole("region", { name: "On the board." });
+  const cards = board.locator('[data-result-status="verified"]');
+  const featured = board.locator(".result-scorecard--featured");
 
+  await expect(cards).toHaveCount(2);
+  await expect(featured).toHaveCount(1);
   await expect(featured.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
   await expect(featured).not.toContainText("BushBash");
+  await expect(cards.nth(1).getByText("BushBash CTF 2026", { exact: true })).toBeVisible();
+  await expect(cards.nth(1).getByText("1 / 994", { exact: true })).toBeVisible();
 });
 
 test("display headings wrap only between words", async ({ page }) => {
