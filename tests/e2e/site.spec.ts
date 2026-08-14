@@ -170,6 +170,28 @@ test("primary navigation and result records stay inside a 320 pixel viewport", a
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
 
+test("home file links meet the 24 pixel minimum target size", async ({ page }) => {
+  await page.goto("/");
+
+  const heights = await page.locator("[data-recent-files] a").evaluateAll((links) =>
+    links.map((link) => link.getBoundingClientRect().height)
+  );
+
+  expect(heights.every((height) => height >= 24)).toBe(true);
+});
+
+test("mobile event headings use the full result record width", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto("/");
+
+  const eventWidth = await page
+    .locator("[data-result-status='verified'] th[scope='row']")
+    .first()
+    .evaluate((heading) => heading.getBoundingClientRect().width);
+
+  expect(eventWidth).toBeGreaterThanOrEqual(280);
+});
+
 test("the release makes no third-party requests and loads without console errors", async ({ page }) => {
   const thirdPartyRequests: string[] = [];
   const consoleErrors: string[] = [];

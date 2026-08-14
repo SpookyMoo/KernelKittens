@@ -8,26 +8,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   canonicalPath="/404.html"
 >
   <div class="page-shell">
-    <section class="not-found" aria-labelledby="not-found-title">
-      <p class="eyebrow">Error 404</p>
-      <h1 id="not-found-title">That page is not here.</h1>
-      <p class="lede">The route may have moved, or it never made it into the public build.</p>
-      <div class="button-row">
-        <a class="button-link" href="/">Back home</a>
-        <a class="button-link button-link--quiet" href="/writeups/">Open write-ups</a>
-      </div>
+    <section class="archive-intro missing-file" aria-labelledby="not-found-title">
+      <p class="path-label">/404</p>
+      <h1 id="not-found-title">404 / file not found</h1>
+      <p class="lede">That path is not in the public archive.</p>
+      <ul class="file-list">
+        <li><a href="/">Back home</a></li>
+        <li><a href="/writeups/">Open write-ups</a></li>
+      </ul>
     </section>
   </div>
 </BaseLayout>
-
-<style>
-  .not-found {
-    min-height: calc(100vh - 13rem);
-    padding-block: clamp(5rem, 15vw, 10rem);
-  }
-
-  .not-found h1 {
-    max-width: 13ch;
-    font-size: clamp(2.8rem, 9vw, 6.5rem);
-  }
-</style>

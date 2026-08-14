@@ -287,6 +287,12 @@ h3 {
   list-style: none;
 }
 
+.file-list a {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
+}
+
 .file-list a::before {
   color: var(--muted);
   content: "- ";
@@ -314,6 +320,35 @@ h3 {
 .writeup-list {
   display: grid;
   gap: 0;
+  margin-top: 1rem;
+  border-top: 1px dotted var(--line);
+}
+
+.writeup-entry {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 1rem;
+  border-bottom: 1px dotted var(--line);
+}
+
+.writeup-entry time,
+.writeup-entry p {
+  color: var(--muted);
+  font: 0.75rem/1.5 var(--font-data);
+}
+
+.writeup-entry h2 {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.writeup-entry p {
+  margin: 0.35rem 0 0;
+}
+
+.file-count {
+  margin-bottom: 0.75rem;
 }
 
 .empty-state {
@@ -324,6 +359,14 @@ h3 {
 
 .empty-state p {
   color: var(--muted);
+}
+
+.missing-file {
+  min-height: 28rem;
+}
+
+.missing-file .file-list {
+  margin-top: 1.5rem;
 }
 
 .site-footer {
@@ -397,6 +440,10 @@ h3 {
     border: 0;
   }
 
+  .result-ledger tbody th {
+    width: 100%;
+  }
+
   .result-ledger td {
     display: grid;
     grid-template-columns: 5.25rem minmax(0, 1fr);
@@ -406,6 +453,11 @@ h3 {
   .result-ledger td::before {
     color: var(--muted);
     content: attr(data-label);
+  }
+
+  .writeup-entry {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
   }
 
   .site-footer__inner {
