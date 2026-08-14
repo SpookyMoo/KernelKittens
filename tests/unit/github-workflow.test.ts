@@ -54,5 +54,7 @@ describe("GitHub verification and deployment workflow", () => {
     expect(visualSpec).toContain("width: 320");
     expect(visualSpec).not.toContain("width: 390");
     expect(workflow).toContain("name: visual-review");
+    expect(workflow).toContain("if: ${{ success() }}");
+    expect(workflow).not.toContain("if: ${{ always() }}");
   });
 });
