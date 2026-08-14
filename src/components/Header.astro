@@ -1,12 +1,14 @@
 ---
-import BrandMark from "./BrandMark.astro";
 import { siteConfig } from "../config/site";
 
 const currentPath = Astro.url.pathname;
+const asciiCat = String.raw` /\_/\
+( o.o )
+ > ^ <`;
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/results/", label: "Results" },
-  { href: "/writeups/", label: "Write-ups" }
+  { href: "/", label: "home" },
+  { href: "/results/", label: "results" },
+  { href: "/writeups/", label: "write-ups" }
 ];
 
 function isCurrent(href: string): boolean {
@@ -17,23 +19,24 @@ function isCurrent(href: string): boolean {
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="brand-link" href="/" aria-label="Kernel Kittens">
-      <BrandMark decorative={true} class="brand-link__mark" />
-      <span class="brand-link__name">Kernel Kittens</span>
+    <a class="crew-identity" href="/" aria-label={siteConfig.name}>
+      <pre class="crew-cat" aria-hidden="true">{asciiCat}</pre>
+      <span class="crew-signature" data-crew-signature>
+        <strong>kernel kittens</strong>
+        <small>root@kk / est. 2026</small>
+      </span>
     </a>
 
     <nav aria-label="Primary">
-      <ul class="nav-list">
+      <ul class="crew-nav">
         {links.map((link) => (
           <li>
             <a href={link.href} aria-current={isCurrent(link.href) ? "page" : undefined}>
-              {link.label}
+              [{link.label}]
             </a>
           </li>
         ))}
-        {siteConfig.ctfTimeUrl && (
-          <li><a href={siteConfig.ctfTimeUrl}>CTFtime</a></li>
-        )}
+        {siteConfig.ctfTimeUrl && <li><a href={siteConfig.ctfTimeUrl}>[ctftime]</a></li>}
       </ul>
     </nav>
   </div>
