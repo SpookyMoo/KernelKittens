@@ -3,8 +3,6 @@ import MotionStage from "../components/MotionStage.astro";
 import ResultScorecard from "../components/ResultScorecard.astro";
 import { verifiedResults } from "../data/results";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const featuredResult = verifiedResults[0];
 ---
 
 <BaseLayout>
@@ -35,7 +33,11 @@ const featuredResult = verifiedResults[0];
         <p>Every number on this page has a source. Work from an older team keeps the older team name.</p>
       </div>
 
-      {featuredResult && <ResultScorecard result={featuredResult} featured={true} />}
+      <div class="home-results">
+        {verifiedResults.map((result, index) => (
+          <ResultScorecard result={result} featured={index === 0} />
+        ))}
+      </div>
     </section>
 
     <section class="section archive-callout" aria-labelledby="archive-title">

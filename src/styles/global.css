@@ -554,6 +554,11 @@ h3 {
   box-shadow: 0.85rem 0.85rem 0 var(--signal);
 }
 
+.home-results {
+  display: grid;
+  gap: 2rem;
+}
+
 .result-scorecard__header {
   display: flex;
   min-height: 3rem;

@@ -18,4 +18,3 @@ Show every verified result on the homepage board while keeping the strongest ove
 - Browser coverage must prove exactly one card is featured and that it is Cyber Apocalypse.
 - The full build, publication boundary, browser, accessibility, and visual suites must pass.
 - Fresh desktop and mobile captures must be inspected before release.
-

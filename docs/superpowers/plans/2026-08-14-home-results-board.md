@@ -29,17 +29,17 @@
 - Consumes: `verifiedResults` and `ResultScorecard`
 - Produces: `.home-results` containing ordered verified scorecards
 
-- [ ] **Step 1: Write the failing browser test**
+- [x] **Step 1: Write the failing browser test**
 
 Update the homepage result test to select the section headed `On the board.`, require two verified scorecards, require Cyber Apocalypse in the sole featured card, and require BushBash with `1 / 994` in the second card.
 
-- [ ] **Step 2: Run the focused test to verify it fails**
+- [x] **Step 2: Run the focused test to verify it fails**
 
 Run `npm run build` followed by `npx playwright test tests/e2e/site.spec.ts -g "home board"`.
 
 Expected: failure because the homepage currently renders one scorecard.
 
-- [ ] **Step 3: Write the minimal implementation**
+- [x] **Step 3: Write the minimal implementation**
 
 Replace the single featured scorecard with:
 
@@ -60,13 +60,12 @@ Add this spacing rule:
 }
 ```
 
-- [ ] **Step 4: Run focused and full verification**
+- [x] **Step 4: Run focused and full verification**
 
 Run `npm run build`, the focused Playwright test, then `npm test`.
 
 Expected: all checks pass with 19 unit tests, 17 browser tests, 8 accessibility tests, and 1 visual test.
 
-- [ ] **Step 5: Inspect and commit**
+- [x] **Step 5: Inspect and commit**
 
 Inspect the fresh desktop and mobile homepage captures, review the diff for public-boundary leaks, and commit the implementation.
-
