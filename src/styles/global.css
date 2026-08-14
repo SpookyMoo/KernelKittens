@@ -804,7 +804,7 @@ h3 {
 
 @media (max-width: 64rem) {
   .hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .hero__copy {
@@ -871,7 +871,7 @@ h3 {
   }
 
   h1 {
-    font-size: clamp(2.8rem, 15vw, 4.6rem);
+    font-size: clamp(2.4rem, 13vw, 4.6rem);
   }
 
   .motion-stage__plate {
