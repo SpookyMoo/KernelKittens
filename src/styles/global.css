@@ -746,7 +746,7 @@ h3 {
 }
 
 .result-list .result-scorecard__metrics {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   grid-template-rows: none;
 }
 

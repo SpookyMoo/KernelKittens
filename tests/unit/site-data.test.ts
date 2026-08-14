@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { siteConfig } from "../../src/config/site";
-import { competitionResults, verifiedResults } from "../../src/data/results";
+import { verifiedResults } from "../../src/data/results";
 
 describe("public site data", () => {
   it("uses the purchased domain and hides the uncreated CTFtime profile", () => {
@@ -9,9 +9,12 @@ describe("public site data", () => {
     expect(siteConfig.ctfTimeUrl).toBeNull();
   });
 
-  it("publishes only verified results", () => {
+  it("publishes only verified results in source order", () => {
     expect(verifiedResults.every((result) => result.status === "verified")).toBe(true);
-    expect(verifiedResults.map((result) => result.id)).not.toContain("bushbash-2026");
+    expect(verifiedResults.map((result) => result.id)).toEqual([
+      "cyber-apocalypse-2026",
+      "bushbash-2026"
+    ]);
   });
 
   it("keeps the verified prior-team result exact and attributed", () => {
@@ -28,9 +31,19 @@ describe("public site data", () => {
     });
   });
 
-  it("does not assign an unverified BushBash placement", () => {
-    const result = competitionResults.find((item) => item.id === "bushbash-2026");
+  it("publishes the verified BushBash result with exact prior-team attribution", () => {
+    const result = verifiedResults.find((item) => item.id === "bushbash-2026");
 
-    expect(result).toMatchObject({ status: "pending", placement: null });
+    expect(result).toMatchObject({
+      placement: 1,
+      placementLabel: "1st",
+      fieldSize: 994,
+      solved: null,
+      totalChallenges: null,
+      score: null,
+      division: "Global",
+      creditedTeam: "1337_PwnSp4c3",
+      attribution: "Member result with a prior team"
+    });
   });
 });
