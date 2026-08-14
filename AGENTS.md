@@ -22,7 +22,7 @@ Run `npm test`, `npm audit`, `git diff --check`, and `go run github.com/rhysd/ac
 
 ## Repository and deployment
 
-- GitHub `romilp619/KernelKittens` on `main` is the production source after migration.
+- GitHub `SpookyMoo/KernelKittens` on `main` is the production source.
 - Keep the private Gitea remote as a backup. Do not force-push or overwrite shared GitHub history.
-- GitHub Actions deploys the exact tested `dist` artifact to `swa-kernel-kittens-prod-r3`.
-- The Azure token belongs only in the GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+- GitHub Actions deploys the exact tested `dist` artifact to GitHub Pages.
+- `public/CNAME` must remain `kernelkittens.team` unless Moo explicitly changes the public domain.

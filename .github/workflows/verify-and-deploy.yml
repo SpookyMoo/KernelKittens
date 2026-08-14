@@ -50,36 +50,25 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Save tested site
-        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - name: Save tested site for GitHub Pages
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
-          name: tested-site
           path: dist
-          if-no-files-found: error
-          retention-days: 1
 
   deploy:
-    name: Deploy tested release
+    name: Deploy tested release to GitHub Pages
     needs: verify
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
-      name: production
-      url: https://ashy-rock-0ceff091e.7.azurestaticapps.net/
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download tested site
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          name: tested-site
-          path: dist
-
-      - name: Deploy tested site to Azure
-        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          app_location: dist
-          output_location: ""
-          skip_app_build: true
+      - name: Deploy tested site
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

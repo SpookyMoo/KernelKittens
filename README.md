@@ -2,7 +2,7 @@
 
 Public team site for [kernelkittens.team](https://kernelkittens.team). It is a static Astro build with no accounts, analytics, cookies, remote fonts, or third-party scripts.
 
-The shared source repository is `romilp619/KernelKittens` on GitHub. The `main` branch is the production source. The private Gitea remote remains available as a backup while the GitHub deployment settles in.
+The public source repository is `SpookyMoo/KernelKittens` on GitHub. The `main` branch is the production source. The private Gitea remote remains available as a backup.
 
 ## Local checks
 
@@ -24,8 +24,6 @@ Only entries explicitly marked `public` with a recorded publication basis may ge
 
 ## Hosting
 
-GitHub Actions runs the complete release gate on pull requests and production commits. A successful `main` run uploads the exact tested `dist` artifact to the existing Azure Static Web App. Azure does not rebuild a different copy after the tests.
+GitHub Actions runs the complete release gate on pull requests and production commits. A successful `main` run uploads the exact tested `dist` artifact to GitHub Pages. GitHub does not rebuild a different copy after the tests.
 
-The deployment token belongs in the GitHub repository secret named `AZURE_STATIC_WEB_APPS_API_TOKEN`. Never place the value in a file, commit, issue, or workflow log.
-
-Porkbun remains authoritative for the domain. Resource names, DNS shape, and rollback details are in `docs/deployment.md`.
+Porkbun remains authoritative for `kernelkittens.team`. DNS shape and rollback details are in `docs/deployment.md`.
