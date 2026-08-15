@@ -54,6 +54,15 @@ for (const route of publicRoutes) {
   });
 }
 
+test("accessibility page uses the team contact address", async ({ page }) => {
+  await page.goto("/accessibility/");
+
+  await expect(page.getByRole("link", { name: "KernelKittens@pm.me" })).toHaveAttribute(
+    "href",
+    "mailto:KernelKittens@pm.me"
+  );
+});
+
 test("results show exact verified metrics and prior-team attribution", async ({ page }) => {
   await page.goto("/results/");
   const cyberApocalypse = page.locator("[data-result-status='verified']").filter({
