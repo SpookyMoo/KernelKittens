@@ -12,11 +12,12 @@ async function expectBushBashMetrics(row: Locator): Promise<void> {
 test("home presents the small crew archive identity", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { level: 1, name: "kernel kittens" })).toBeVisible();
-  await expect(page.locator("[data-crew-signature]")).toContainText("root@kk");
-  await expect(
-    page.getByText("We play CTFs and keep the useful parts here.", { exact: true })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Kernel Kittens" })).toBeVisible();
+  await expect(page.locator("[data-crew-signature] strong")).toHaveText("Kernel Kittens");
+  await expect(page.getByText("Kernel Kittens / CTF team", { exact: true })).toBeVisible();
+  await expect(page.locator(".archive-intro--home .lede")).toHaveText("We play CTFs.");
+  await expect(page.locator(".crew-signature strong")).toHaveCSS("text-transform", "none");
+  await expect(page.locator(".archive-intro--home h1")).toHaveCSS("text-transform", "none");
   await expect(page.locator(".motion-stage, .result-scorecard, .button-link")).toHaveCount(0);
 });
 
@@ -32,14 +33,16 @@ test("home exposes persistent navigation and a working skip link", async ({ page
   );
 });
 
-test("home exposes the verified result ledger and recent files", async ({ page }) => {
+test("home exposes the verified result ledger and only the write-ups recent file", async ({ page }) => {
   await page.goto("/");
 
   const ledger = page.locator("[data-result-ledger]");
+  const recentFiles = page.locator("[data-recent-files]");
   await expect(ledger.locator("[data-result-status='verified']")).toHaveCount(2);
   await expect(ledger.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
   await expect(ledger.getByText("BushBash CTF 2026", { exact: true })).toBeVisible();
-  await expect(page.locator("[data-recent-files]").getByRole("link")).toHaveCount(2);
+  await expect(recentFiles.getByRole("link")).toHaveCount(1);
+  await expect(recentFiles.locator("a[href='/writeups/']")).toHaveText("/writeups/");
 });
 
 for (const route of publicRoutes) {
