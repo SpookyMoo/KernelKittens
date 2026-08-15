@@ -1,54 +1,29 @@
 ---
-import MotionStage from "../components/MotionStage.astro";
-import ResultScorecard from "../components/ResultScorecard.astro";
+import ResultLedger from "../components/ResultLedger.astro";
 import { verifiedResults } from "../data/results";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout>
   <div class="page-shell">
-    <section class="hero" aria-labelledby="home-title">
-      <div class="hero__copy">
-        <p class="eyebrow">Kernel Kittens / CTF team</p>
-        <h1 id="home-title">We play CTFs. The scoreboard can do the talking.</h1>
-        <p class="lede">Results, write-ups, and whatever survived the packet capture.</p>
-        <div class="button-row">
-          <a class="button-link" href="/results/">See the results</a>
-          <a class="button-link button-link--quiet" href="/writeups/">Read the write-ups</a>
-        </div>
-      </div>
+    <header class="archive-intro archive-intro--home">
+      <p class="path-label">/home</p>
+      <h1>kernel kittens</h1>
+      <p class="lede">We play CTFs and keep the useful parts here.</p>
+      <p class="status-line">CTF team / est. 2026</p>
+    </header>
 
-      <MotionStage
-        title="Kernel Kittens motion graphics static keyframe"
-        caption="Reserved for the team opener. The poster holds the frame until the motion cut is ready."
-      />
+    <section class="archive-section" aria-labelledby="home-results-title">
+      <h2 id="home-results-title">results</h2>
+      <ResultLedger results={verifiedResults} caption="Verified competition results" />
     </section>
 
-    <section class="section" aria-labelledby="featured-result-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Selected result</p>
-          <h2 id="featured-result-title">On the board.</h2>
-        </div>
-        <p>Every number on this page has a source. Work from an older team keeps the older team name.</p>
-      </div>
-
-      <div class="home-results">
-        {verifiedResults.map((result, index) => (
-          <ResultScorecard result={result} featured={index === 0} />
-        ))}
-      </div>
-    </section>
-
-    <section class="section archive-callout" aria-labelledby="archive-title">
-      <div>
-        <p class="eyebrow">Write-ups</p>
-        <h2 id="archive-title">The useful part comes next.</h2>
-      </div>
-      <div class="archive-callout__copy">
-        <p>BushBash notes stay private while publication is blocked. When the rules clear them, the archive gets the real technical work.</p>
-        <a href="/writeups/">Open the archive</a>
-      </div>
+    <section class="archive-section" data-recent-files aria-labelledby="recent-files-title">
+      <h2 id="recent-files-title">recent files</h2>
+      <ul class="file-list">
+        <li><a href="/results/">/results/</a></li>
+        <li><a href="/writeups/">/writeups/</a></li>
+      </ul>
     </section>
   </div>
 </BaseLayout>

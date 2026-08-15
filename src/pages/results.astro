@@ -1,6 +1,5 @@
 ---
-import MotionStage from "../components/MotionStage.astro";
-import ResultScorecard from "../components/ResultScorecard.astro";
+import ResultLedger from "../components/ResultLedger.astro";
 import { verifiedResults } from "../data/results";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
@@ -11,24 +10,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   canonicalPath="/results/"
 >
   <div class="page-shell">
-    <header class="page-intro page-intro--results">
-      <p class="eyebrow">Scoreboard</p>
-      <h1>Results</h1>
-      <p class="lede">Placements we can prove. Prior-team work stays labeled as prior-team work.</p>
+    <header class="archive-intro">
+      <p class="path-label">/results/</p>
+      <h1>results</h1>
+      <p class="lede">Placements we can prove. Prior-team work keeps the prior team name.</p>
     </header>
 
-    <div class="results-layout">
-      <section class="result-list" aria-label="Verified competition results">
-        {verifiedResults.map((result) => <ResultScorecard result={result} />)}
-      </section>
-
-      <aside class="results-cutdown" aria-label="Motion graphics cutdown">
-        <MotionStage
-          variant="square"
-          title="Kernel Kittens square motion graphics static keyframe"
-          caption="Square cutdown reserved for result reels and team posts."
-        />
-      </aside>
-    </div>
+    <section class="archive-section" aria-labelledby="verified-results-title">
+      <h2 id="verified-results-title">verified records</h2>
+      <ResultLedger results={verifiedResults} caption="Verified competition results" />
+    </section>
   </div>
 </BaseLayout>

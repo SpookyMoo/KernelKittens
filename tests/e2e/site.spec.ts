@@ -3,23 +3,27 @@ import { expect, test, type Locator } from "@playwright/test";
 const publicRoutes = ["/", "/results/", "/writeups/", "/accessibility/"];
 const bushBashMetrics = ["1 / 994", "28 / 28", "5,997", "Open - International"];
 
-async function expectBushBashMetrics(card: Locator): Promise<void> {
+async function expectBushBashMetrics(row: Locator): Promise<void> {
   for (const metric of bushBashMetrics) {
-    await expect(card.getByText(metric, { exact: true })).toBeVisible();
+    await expect(row.getByText(metric, { exact: true })).toBeVisible();
   }
 }
+
+test("home presents the small crew archive identity", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1, name: "kernel kittens" })).toBeVisible();
+  await expect(page.locator("[data-crew-signature]")).toContainText("root@kk");
+  await expect(
+    page.getByText("We play CTFs and keep the useful parts here.", { exact: true })
+  ).toBeVisible();
+  await expect(page.locator(".motion-stage, .result-scorecard, .button-link")).toHaveCount(0);
+});
 
 test("home exposes persistent navigation and a working skip link", async ({ page }) => {
   await page.goto("/");
 
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: "We play CTFs. The scoreboard can do the talking."
-    })
-  ).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
-
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
   await expect(page.getByRole("link", { name: "Skip to content" })).toHaveAttribute(
@@ -28,34 +32,14 @@ test("home exposes persistent navigation and a working skip link", async ({ page
   );
 });
 
-test("home reserves an accessible static motion stage without runtime media", async ({ page }) => {
+test("home exposes the verified result ledger and recent files", async ({ page }) => {
   await page.goto("/");
 
-  await expect(
-    page.getByRole("figure", { name: "Kernel Kittens motion graphics static keyframe" })
-  ).toBeVisible();
-  await expect(page.getByText("Static keyframe", { exact: true })).toBeVisible();
-  await expect(page.locator("video, canvas, script")).toHaveCount(0);
-});
-
-test("home board shows both verified results with Cyber Apocalypse featured", async ({ page }) => {
-  await page.goto("/");
-  const board = page.getByRole("region", { name: "On the board." });
-  const cards = board.locator('[data-result-status="verified"]');
-  const featured = board.locator(".result-scorecard--featured");
-
-  await expect(cards).toHaveCount(2);
-  await expect(featured).toHaveCount(1);
-  await expect(featured.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
-  await expect(featured).not.toContainText("BushBash");
-  await expect(cards.nth(1).getByText("BushBash CTF 2026", { exact: true })).toBeVisible();
-  await expectBushBashMetrics(cards.nth(1));
-});
-
-test("display headings wrap only between words", async ({ page }) => {
-  await page.goto("/");
-
-  await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("overflow-wrap", "normal");
+  const ledger = page.locator("[data-result-ledger]");
+  await expect(ledger.locator("[data-result-status='verified']")).toHaveCount(2);
+  await expect(ledger.getByText("Cyber Apocalypse 2026", { exact: true })).toBeVisible();
+  await expect(ledger.getByText("BushBash CTF 2026", { exact: true })).toBeVisible();
+  await expect(page.locator("[data-recent-files]").getByRole("link")).toHaveCount(2);
 });
 
 for (const route of publicRoutes) {
@@ -70,6 +54,15 @@ for (const route of publicRoutes) {
   });
 }
 
+test("accessibility page uses the team contact address", async ({ page }) => {
+  await page.goto("/accessibility/");
+
+  await expect(page.getByRole("link", { name: "KernelKittens@pm.me" })).toHaveAttribute(
+    "href",
+    "mailto:KernelKittens@pm.me"
+  );
+});
+
 test("results show exact verified metrics and prior-team attribution", async ({ page }) => {
   await page.goto("/results/");
   const cyberApocalypse = page.locator("[data-result-status='verified']").filter({
@@ -79,29 +72,29 @@ test("results show exact verified metrics and prior-team attribution", async ({ 
     hasText: "BushBash CTF 2026"
   });
 
-  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "results" })).toBeVisible();
   await expect(cyberApocalypse.getByText("12 / 6,744", { exact: true })).toBeVisible();
   await expect(cyberApocalypse.getByText("136 / 136", { exact: true })).toBeVisible();
   await expect(cyberApocalypse.getByText("69,425", { exact: true })).toBeVisible();
-  await expect(cyberApocalypse.getByText("Member result with a prior team", { exact: true })).toBeVisible();
-  await expect(cyberApocalypse.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(cyberApocalypse).toContainText("Member result with a prior team");
+  await expect(cyberApocalypse).toContainText("1337_PwnSp4c3");
   await expectBushBashMetrics(bushBash);
-  await expect(bushBash.getByText("Member result with a prior team", { exact: true })).toBeVisible();
-  await expect(bushBash.getByText(/1337_PwnSp4c3/)).toBeVisible();
+  await expect(bushBash).toContainText("Member result with a prior team");
+  await expect(bushBash).toContainText("1337_PwnSp4c3");
   await expect(page.locator("[data-result-status='verified']")).toHaveCount(2);
   await expect(page.locator("[data-result-status='pending']")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(/Google Cybersecurity|CCNA|CompTIA/i);
 });
 
-test("BushBash division stays inside its Results card", async ({ page }) => {
+test("BushBash division stays inside its result record", async ({ page }) => {
   for (const width of [1440, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/results/");
 
-    const card = page.locator("[data-result-status='verified']").filter({
+    const row = page.locator("[data-result-status='verified']").filter({
       hasText: "BushBash CTF 2026"
     });
-    const division = card.getByText("Open - International", { exact: true });
+    const division = row.getByText("Open - International", { exact: true });
     const dimensions = await division.evaluate((element) => ({
       clientWidth: element.clientWidth,
       scrollWidth: element.scrollWidth
@@ -118,10 +111,11 @@ test("the retired certification route redirects to results", async ({ request })
   expect(response.headers().location).toBe("/results/");
 });
 
-test("write-up archive explains the publication hold without leaking flags", async ({ page }) => {
+test("write-up archive reports zero public files without leaking flags", async ({ page }) => {
   await page.goto("/writeups/");
 
-  await expect(page.getByRole("heading", { name: "No public write-ups yet." })).toBeVisible();
+  await expect(page.locator("[data-public-file-count]")).toHaveText("0 public files");
+  await expect(page.getByText(/confirmed BushBash notes remain private/i)).toBeVisible();
   await expect(page.locator("body")).not.toContainText(/bushbash\{|HTB\{/i);
 });
 
@@ -146,7 +140,7 @@ test("unknown routes use the custom 404 page", async ({ page }) => {
   const response = await page.goto("/route-that-does-not-exist");
 
   expect(response?.status()).toBe(404);
-  await expect(page.getByRole("heading", { level: 1, name: "That page is not here." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "404 / file not found" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Back home" })).toHaveAttribute("href", "/");
 });
 
@@ -158,17 +152,16 @@ test("the browser receives the restrictive release policy", async ({ page }) => 
   expect(headers["content-security-policy"]).toContain("style-src 'self'");
   expect(headers["permissions-policy"]).toContain("camera=()");
   await expect(page.locator("style")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "results" })).toBeVisible();
 });
 
-test("primary navigation stays visible at a narrow mobile width", async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 720 });
+test("primary navigation and result records stay inside a 320 pixel viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
   await page.goto("/");
 
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Write-ups", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Results", exact: true })).toBeVisible();
-  await expect(page.locator(".motion-stage__plate")).toHaveCSS("aspect-ratio", "16 / 9");
+  await expect(page.getByRole("link", { name: "[write-ups]", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "[results]", exact: true })).toBeVisible();
   const overflowingElements = await page.evaluate(() =>
     [...document.querySelectorAll("*")]
       .map((element) => {
@@ -176,21 +169,36 @@ test("primary navigation stays visible at a narrow mobile width", async ({ page 
         return {
           element: `${element.tagName.toLowerCase()}.${element.className}`,
           left: rect.left,
-          right: rect.right,
+          right: rect.right
         };
       })
-      .filter(({ left, right }) => left < -0.5 || right > window.innerWidth + 0.5),
+      .filter(({ left, right }) => left < -0.5 || right > window.innerWidth + 0.5)
   );
 
   expect(overflowingElements).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
 
-test("reduced motion keeps the storyboard static", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("home file links meet the 24 pixel minimum target size", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.locator(".motion-stage__playhead")).toHaveCSS("animation-name", "none");
+  const heights = await page.locator("[data-recent-files] a").evaluateAll((links) =>
+    links.map((link) => link.getBoundingClientRect().height)
+  );
+
+  expect(heights.every((height) => height >= 24)).toBe(true);
+});
+
+test("mobile event headings use the full result record width", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto("/");
+
+  const eventWidth = await page
+    .locator("[data-result-status='verified'] th[scope='row']")
+    .first()
+    .evaluate((heading) => heading.getBoundingClientRect().width);
+
+  expect(eventWidth).toBeGreaterThanOrEqual(280);
 });
 
 test("the release makes no third-party requests and loads without console errors", async ({ page }) => {

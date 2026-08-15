@@ -9,6 +9,10 @@ describe("public site data", () => {
     expect(siteConfig.ctfTimeUrl).toBeNull();
   });
 
+  it("uses the Kernel Kittens accessibility address", () => {
+    expect(siteConfig.accessibilityEmail).toBe("KernelKittens@pm.me");
+  });
+
   it("publishes only verified results in source order", () => {
     expect(verifiedResults.every((result) => result.status === "verified")).toBe(true);
     expect(verifiedResults.map((result) => result.id)).toEqual([

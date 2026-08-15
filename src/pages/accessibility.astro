@@ -9,21 +9,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   canonicalPath="/accessibility/"
 >
   <div class="page-shell">
-    <header class="page-intro">
-      <p class="eyebrow">Access is part of the build</p>
-      <h1>Accessibility</h1>
-      <p class="lede">This site is built for keyboard, screen reader, zoom, reduced-motion, and high-contrast use.</p>
+    <header class="archive-intro">
+      <p class="path-label">/accessibility/</p>
+      <h1>accessibility</h1>
+      <p class="lede">The archive should work without a mouse, sound, animation, or perfect vision.</p>
     </header>
 
-    <div class="prose">
-      <h2>Our target</h2>
-      <p>We target WCAG 2.2 Level AA and test the public routes with automated browser and accessibility checks. The site uses semantic HTML, visible focus, system fonts, and no required client-side JavaScript.</p>
+    <div class="archive-prose">
+      <h2>target</h2>
+      <p>We target WCAG 2.2 Level AA and test every public route with browser and accessibility checks. The site uses semantic HTML, visible focus, system fonts, and no required client-side JavaScript.</p>
 
-      <h2>Report a problem</h2>
+      <h2>report a problem</h2>
       <p>If something blocks you, email <a href={`mailto:${siteConfig.accessibilityEmail}`}>{siteConfig.accessibilityEmail}</a>. Include the page address and what you were trying to do if you can. We aim to acknowledge accessibility reports within 48 hours.</p>
 
-      <h2>Known gaps</h2>
+      <h2>known gaps</h2>
       <p>We do not currently know of a critical accessibility blocker. Automated checks cannot catch every problem, so direct reports still matter.</p>
+
+      <p><a href="/">Back home</a></p>
     </div>
   </div>
 </BaseLayout>

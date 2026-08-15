@@ -3,6 +3,5 @@ export const siteConfig = {
   origin: "https://kernelkittens.team",
   description: "CTF write-ups, competition history, and work we can actually show.",
   ctfTimeUrl: null as string | null,
-  accessibilityEmail: "accessibility@kitsunetechnologies.org"
+  accessibilityEmail: "KernelKittens@pm.me"
 } as const;
-
