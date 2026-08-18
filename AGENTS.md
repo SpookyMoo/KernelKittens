@@ -2,10 +2,11 @@
 
 ## One approved theme
 
-- Ready v3 is the only approved visual theme. It is the dark archive interface in `site/` with a black page, orange links, brown rules, terminal labels, ASCII cat, square dialog, and `stray.rar` application title.
+- Ready v3 is the only approved visual theme. It is the dark archive interface in `site/` with a black page, orange links, brown rules, terminal labels, an ASCII cat, and the `stray.rar` application title.
+- The application lives at `/apply/` as a full archive record page. Do not restore a dialog, popup, overlay, or automatic opening behavior.
 - Do not restore, reference, or recreate the retired light portfolio, motion-stage, scorecard, small-crew, branding-card, or alternate application themes.
 - `site/assets/theme.css` is the only public stylesheet. Do not add a second theme, theme switcher, remote font, CSS framework, or generated Astro stylesheet.
-- The live homepage and `/apply/` are the visual reference. Preserve their application behavior unless Moo explicitly requests a behavior change.
+- The live homepage and `/apply/` are the visual reference. The homepage links to `/apply/`, and the application stays in normal page flow. Preserve the Discord assignment and proof behavior unless Moo explicitly requests a change.
 - Historical commits may contain retired designs. History is evidence, not an approved source. Never select a theme from Git history.
 
 ## Public content boundary
