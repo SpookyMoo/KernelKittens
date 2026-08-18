@@ -139,6 +139,8 @@ test("the application client has no modal controls", () => {
   assert.doesNotMatch(client, /function showAssignment\(value\) \{\s*session = value;\s*flag\.value = ""/);
   assert.match(client, /window\.setTimeout\(\(\) => loadSession\(true\), delayMs\)/);
   assert.match(client, /response\.status === 409 && responseStatus === "download_required"/);
+  assert.match(client, /response\.status === 503 && responseStatus === "notification_pending"/);
+  assert.match(client, /Flag accepted, but the Discord receipt is still pending\. Try submit again\./);
   assert.match(client, /response\.status === 400 && responseStatus === "wrong_prefix"/);
   assert.match(client, /That prefix is wrong\. Re-read the flag format and try again\./);
   assert.doesNotMatch(

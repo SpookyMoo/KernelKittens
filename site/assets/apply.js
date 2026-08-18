@@ -232,7 +232,8 @@ if (root !== null) {
         submit.hidden = true;
         return;
       }
-      if (response.status === 409 && responseStatus === "download_required") result.textContent = "Download your archive before submitting.";
+      if (response.status === 503 && responseStatus === "notification_pending") result.textContent = "Flag accepted, but the Discord receipt is still pending. Try submit again.";
+      else if (response.status === 409 && responseStatus === "download_required") result.textContent = "Download your archive before submitting.";
       else if (response.status === 429) result.textContent = "Slow down. Try again in a minute.";
       else if (response.status === 400 && responseStatus === "wrong_prefix") result.textContent = "That prefix is wrong. Re-read the flag format and try again.";
       else if (response.status === 400 && responseStatus === "invalid") result.textContent = "Nope.";
