@@ -50,6 +50,8 @@
             <ul>
               <li>Only the downloaded archive is in scope.</li>
               <li>Do not collaborate with or share challenge material with other people.</li>
+              <li>Scoring is based on the time from your first download to a correct submission.</li>
+              <li>You can repeat this challenge as many times as you want.</li>
               <li>Keep any <code>TOP{...}</code> tokens you find.</li>
             </ul>
           </section>
@@ -72,6 +74,11 @@
                 <p><span>Artifact:</span><span>stray.rar</span></p>
                 <p><span>SHA-256:</span><code data-ready-sha></code></p>
                 <a class="primary-action ready-download" href="https://apply.kernelkittens.team/v1/download" data-ready-download>Download stray.rar</a>
+              </div>
+              <div class="ready-reissue" data-ready-reissue-panel hidden>
+                <p>One-hour cooldown after each archive's first download.</p>
+                <p class="ready-reissue__status" data-ready-reissue-status role="status" aria-live="polite"></p>
+                <button class="ready-text-button" type="button" data-ready-reissue disabled>Request a new archive</button>
               </div>
             </li>
             <li class="application-step" data-ready-assignment hidden>
