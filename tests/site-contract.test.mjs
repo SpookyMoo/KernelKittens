@@ -35,6 +35,8 @@ test("every public page uses only the Ready v3 archive theme", () => {
     assert.match(html, /class="skip-link"/);
     assert.equal((html.match(/<main\b/g) ?? []).length, 1, `${page} needs one main landmark`);
     assert.match(html, /href="\/"/);
+    assert.match(html, /<small>est\. 2026<\/small>/);
+    assert.equal(html.includes("root@kk"), false, `${page} still contains the retired logo subtitle`);
     assert.deepEqual(
       [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((match) => match[1]),
       ["/assets/theme.css"],
@@ -47,16 +49,47 @@ test("every public page uses only the Ready v3 archive theme", () => {
   }
 });
 
-test("the approved homepage and application identity stay intact", () => {
+test("the homepage links to the dedicated application route without loading it", () => {
   const home = read("index.html");
+  assert.match(home, /<title>Kernel Kittens \| CTF Team<\/title>/);
+  assert.match(home, /href="\/apply\/"/);
+  assert.match(home, /aria-current="page"[^>]*>\[home\]<\/a>/);
+  assert.doesNotMatch(home, /data-ready-root|data-api-origin|data-ready-dialog|data-ready-form/);
+  assert.doesNotMatch(home, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
+});
+
+test("the application is a full archive record with the existing API flow", () => {
   const apply = read("apply/index.html");
-  for (const html of [home, apply]) {
-    assert.match(html, /<title>stray\.rar \| Kernel Kittens<\/title>/);
-    assert.match(html, /<h2[^>]*>stray\.rar<\/h2>/);
-    assert.match(html, /data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
-    assert.match(html, /<dialog[^>]+data-ready-dialog[^>]+open>/);
-    assert.match(html, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
-  }
+  assert.match(apply, /<title>stray\.rar \| Kernel Kittens<\/title>/);
+  assert.match(apply, /<h1>stray\.rar<\/h1>/);
+  assert.match(apply, /data-ready-root/);
+  assert.match(apply, /data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
+  assert.match(apply, /class="application-record"/);
+  assert.match(apply, /<ol class="application-steps">/);
+  assert.equal((apply.match(/<li class="application-step"/g) ?? []).length, 3);
+  assert.match(apply, /data-ready-login-link/);
+  assert.match(apply, /data-ready-download/);
+  assert.match(apply, /data-ready-form/);
+  assert.match(apply, /data-ready-flag/);
+  assert.match(apply, /data-ready-top/);
+  assert.match(apply, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
+  assert.doesNotMatch(apply, /<dialog|data-ready-dialog|data-ready-open|data-ready-close|data-ready-reopen/);
+  assert.equal(apply.includes("/apply/stray.rar"), false);
+});
+
+test("the application client has no modal controls", () => {
+  const client = read("assets/apply.js");
+  assert.doesNotMatch(client, /data-ready-dialog|data-ready-open|data-ready-close|data-ready-reopen|showModal/);
+  assert.match(client, /\/v1\/session/);
+  assert.match(client, /\/v1\/download/);
+  assert.match(client, /\/v1\/submit/);
+  assert.match(client, /\/v1\/logout/);
+});
+
+test("secondary routes expose their current-page state", () => {
+  assert.match(read("results/index.html"), /<a href="\/results\/" aria-current="page">\[results\]<\/a>/);
+  assert.match(read("writeups/index.html"), /<a href="\/writeups\/" aria-current="page">\[write-ups\]<\/a>/);
+  assert.match(read("accessibility/index.html"), /<a href="\/accessibility\/" aria-current="page">accessibility<\/a>/);
 });
 
 test("the canonical stylesheet contains Ready v3 and no retired theme", () => {
