@@ -58,6 +58,40 @@ test("the homepage links to the dedicated application route without loading it",
   assert.doesNotMatch(home, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
 });
 
+test("the homepage removes the redundant path and publishes both verified results", () => {
+  const home = read("index.html");
+  assert.doesNotMatch(home, /<p class="path-label">\/home<\/p>/);
+  assert.match(home, /<h2 id="competition-results-title">Competition results<\/h2>/);
+  assert.match(home, /Cyber Apocalypse 2026/);
+  assert.match(home, /12 \/ 6,744/);
+  assert.match(home, /136 \/ 136/);
+  assert.match(home, /69,425/);
+  assert.match(home, /BushBash CTF 2026/);
+  assert.match(home, /1 \/ 994/);
+  assert.match(home, /28 \/ 28/);
+  assert.match(home, /5,997/);
+  assert.equal((home.match(/1337_PwnSp4c3/g) ?? []).length, 2);
+  assert.ok(
+    home.indexOf("Competition results") < home.indexOf("Recruitment"),
+    "results must appear before Recruitment",
+  );
+});
+
+test("the Results page contains the complete verified competition record", () => {
+  const results = read("results/index.html");
+  assert.equal((results.match(/class="archive-record"/g) ?? []).length, 2);
+  assert.match(results, /Cyber Apocalypse 2026/);
+  assert.match(results, /12 \/ 6,744/);
+  assert.match(results, /136 \/ 136/);
+  assert.match(results, /69,425/);
+  assert.match(results, /BushBash CTF 2026/);
+  assert.match(results, /1 \/ 994/);
+  assert.match(results, /28 \/ 28/);
+  assert.match(results, /5,997/);
+  assert.match(results, /Open - International/);
+  assert.equal((results.match(/1337_PwnSp4c3/g) ?? []).length, 2);
+});
+
 test("the application is a full archive record with the existing API flow", () => {
   const apply = read("apply/index.html");
   assert.match(apply, /<title>stray\.rar \| Kernel Kittens<\/title>/);
@@ -77,6 +111,17 @@ test("the application is a full archive record with the existing API flow", () =
   assert.equal(apply.includes("/apply/stray.rar"), false);
 });
 
+test("the application explains timed scoring and keeps reissue hidden until download", () => {
+  const apply = read("apply/index.html");
+  assert.match(apply, /Scoring is based on the time from your first download to a correct submission\./);
+  assert.match(apply, /You can repeat this challenge as many times as you want\./);
+  assert.match(apply, /data-ready-reissue-panel hidden/);
+  assert.match(apply, /data-ready-reissue-status[^>]*role="status"[^>]*aria-live="polite"/);
+  assert.match(apply, /data-ready-reissue/);
+  assert.match(apply, />Request a new archive<\/button>/);
+  assert.match(apply, /One-hour cooldown after each archive's first download\./);
+});
+
 test("the application client has no modal controls", () => {
   const client = read("assets/apply.js");
   assert.doesNotMatch(client, /data-ready-dialog|data-ready-open|data-ready-close|data-ready-reopen|showModal/);
@@ -84,6 +129,20 @@ test("the application client has no modal controls", () => {
   assert.match(client, /\/v1\/download/);
   assert.match(client, /\/v1\/submit/);
   assert.match(client, /\/v1\/logout/);
+  assert.match(client, /\/v1\/reissue/);
+  assert.match(client, /data-ready-reissue-panel/);
+  assert.match(client, /firstDownloadAtMs/);
+  assert.match(client, /reissueAvailableAtMs/);
+  assert.match(client, /setInterval/);
+  assert.match(client, /if \(clearProof\) \{\s*flag\.value = "";\s*topTokens\.value = "";/);
+  assert.match(client, /loadSession\(false, true\)/);
+  assert.doesNotMatch(client, /function showAssignment\(value\) \{\s*session = value;\s*flag\.value = ""/);
+  assert.match(client, /window\.setTimeout\(\(\) => loadSession\(true\), delayMs\)/);
+  assert.match(client, /response\.status === 409 && responseStatus === "download_required"/);
+  assert.doesNotMatch(
+    client,
+    /download\.addEventListener\("click",[\s\S]*?reissuePanel\.hidden = false/
+  );
 });
 
 test("secondary routes expose their current-page state", () => {

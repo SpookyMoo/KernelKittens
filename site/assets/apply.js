@@ -25,7 +25,10 @@ function parseSession(value) {
     !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,126}\.rar$/u.test(value.artifact.filename) ||
     typeof value.artifact.sha256 !== "string" ||
     !/^[a-f0-9]{64}$/u.test(value.artifact.sha256) ||
-    !(value.solvedAtMs === null || Number.isSafeInteger(value.solvedAtMs))
+    !(value.solvedAtMs === null || Number.isSafeInteger(value.solvedAtMs)) ||
+    !(value.firstDownloadAtMs === null || Number.isSafeInteger(value.firstDownloadAtMs)) ||
+    !(value.reissueAvailableAtMs === null ||
+      Number.isSafeInteger(value.reissueAvailableAtMs))
   ) {
     return null;
   }
@@ -40,6 +43,8 @@ function parseSession(value) {
       sha256: value.artifact.sha256,
     },
     solvedAtMs: value.solvedAtMs,
+    firstDownloadAtMs: value.firstDownloadAtMs,
+    reissueAvailableAtMs: value.reissueAvailableAtMs,
   };
 }
 
@@ -63,20 +68,61 @@ if (root !== null) {
   const submit = requireElement(root, "[data-ready-submit]");
   const result = requireElement(root, "[data-ready-result]");
   const logout = requireElement(root, "[data-ready-logout]");
+  const reissuePanel = requireElement(root, "[data-ready-reissue-panel]");
+  const reissueStatus = requireElement(root, "[data-ready-reissue-status]");
+  const reissue = requireElement(root, "[data-ready-reissue]");
   let session = null;
+  let reissueTimer = null;
 
   loginLink.href = `${apiOrigin}/auth/discord/start`;
   download.href = `${apiOrigin}/v1/download`;
 
   function showLoggedOut(message = "Discord assigns your file.") {
+    if (reissueTimer !== null) window.clearInterval(reissueTimer);
+    reissueTimer = null;
     session = null;
     status.textContent = message;
     login.hidden = false;
     for (const section of assignmentSections) section.hidden = true;
+    reissuePanel.hidden = true;
   }
 
-  function showAssignment(value) {
+  function updateReissueCountdown() {
+    if (session === null || session.reissueAvailableAtMs === null) return;
+    const remainingMs = Math.max(0, session.reissueAvailableAtMs - Date.now());
+    if (remainingMs === 0) {
+      reissueStatus.textContent = "A new archive is available.";
+      reissue.disabled = false;
+      if (reissueTimer !== null) window.clearInterval(reissueTimer);
+      reissueTimer = null;
+      return;
+    }
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    reissueStatus.textContent = `Available in ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.`;
+    reissue.disabled = true;
+  }
+
+  function startReissueCountdown() {
+    if (reissueTimer !== null) window.clearInterval(reissueTimer);
+    updateReissueCountdown();
+    if (reissue.disabled) reissueTimer = window.setInterval(updateReissueCountdown, 1000);
+  }
+
+  function showAssignment(value, clearProof = false) {
     session = value;
+    if (clearProof) {
+      flag.value = "";
+      topTokens.value = "";
+    }
+    form.hidden = false;
+    flag.disabled = false;
+    topTokens.disabled = false;
+    submit.hidden = false;
+    submit.disabled = false;
+    result.textContent = "";
     status.textContent = "Assignment recovered.";
     login.hidden = true;
     for (const section of assignmentSections) section.hidden = false;
@@ -86,13 +132,21 @@ if (root !== null) {
     downloadUrl.searchParams.set("action", value.downloadAction);
     download.href = downloadUrl.toString();
     sha.textContent = value.artifact.sha256;
+    reissuePanel.hidden = value.firstDownloadAtMs === null;
+    if (!reissuePanel.hidden) startReissueCountdown();
+    else {
+      if (reissueTimer !== null) window.clearInterval(reissueTimer);
+      reissueTimer = null;
+      reissueStatus.textContent = "";
+      reissue.disabled = true;
+    }
     if (value.solvedAtMs !== null) {
       form.hidden = true;
       result.textContent = "received.";
     }
   }
 
-  async function loadSession() {
+  async function loadSession(keepCurrentOnError = false, clearProof = false) {
     try {
       const response = await fetch(`${apiOrigin}/v1/session`, {
         method: "GET",
@@ -107,11 +161,54 @@ if (root !== null) {
       }
       const parsed = parseSession(value);
       if (parsed === null) throw new Error("invalid session");
-      showAssignment(parsed);
+      showAssignment(parsed, clearProof);
     } catch {
-      showLoggedOut("Challenge service unavailable. Try again.");
+      if (!keepCurrentOnError) {
+        showLoggedOut("Challenge service unavailable. Try again.");
+      }
     }
   }
+
+  download.addEventListener("click", () => {
+    for (const delayMs of [750, 2000, 5000]) {
+      window.setTimeout(() => loadSession(true), delayMs);
+    }
+  });
+
+  reissue.addEventListener("click", async () => {
+    if (session === null || reissue.disabled) return;
+    if (reissueTimer !== null) window.clearInterval(reissueTimer);
+    reissueTimer = null;
+    reissue.disabled = true;
+    reissueStatus.textContent = "Requesting a new archive...";
+    try {
+      const response = await fetch(`${apiOrigin}/v1/reissue`, {
+        method: "POST",
+        credentials: "include",
+        headers: { accept: "application/json", "content-type": "text/plain;charset=UTF-8" },
+        body: JSON.stringify({ csrf: session.csrf }),
+      });
+      const value = await response.json();
+      const responseStatus = isObject(value) ? value.status : undefined;
+      if (response.ok && responseStatus === "issued") {
+        await loadSession(false, true);
+        return;
+      }
+      if (response.status === 429 && responseStatus === "cooldown") {
+        reissueStatus.textContent = "The one-hour cooldown is still running.";
+        startReissueCountdown();
+      } else if (response.status === 409 && responseStatus === "download_required") {
+        reissueStatus.textContent = "Download this archive before requesting another one.";
+      } else if (response.status === 403) {
+        reissueStatus.textContent = "Session expired. Sign in again.";
+      } else {
+        reissueStatus.textContent = "Archive service unavailable. Try again.";
+      }
+    } catch {
+      reissueStatus.textContent = "Archive service unavailable. Try again.";
+      if (session?.reissueAvailableAtMs !== null && Date.now() >= session.reissueAvailableAtMs) reissue.disabled = false;
+    }
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -135,7 +232,8 @@ if (root !== null) {
         submit.hidden = true;
         return;
       }
-      if (response.status === 429) result.textContent = "Slow down. Try again in a minute.";
+      if (response.status === 409 && responseStatus === "download_required") result.textContent = "Download your archive before submitting.";
+      else if (response.status === 429) result.textContent = "Slow down. Try again in a minute.";
       else if (response.status === 400 && responseStatus === "invalid") result.textContent = "Nope.";
       else if (response.status === 403) result.textContent = "Session expired. Sign in again.";
       else result.textContent = "Submission service unavailable. Try again.";
