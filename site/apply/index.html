@@ -55,7 +55,9 @@
               <li>CTF members can reliably finish this in 10-15 minutes.</li>
               <li>Finishing at any time grants an invite to the CTF server.</li>
               <li>You can repeat this challenge as many times as you want.</li>
-              <li>Keep any <code>TOP{...}</code> tokens you find.</li>
+              <li>Submit the flag from your assigned archive.</li>
+            <li>Under 5:00 gets Member plus CTF Player.</li>
+            <li>5:00 or longer gets Member.</li>
             </ul>
           </section>
           <ol class="application-steps">
@@ -89,15 +91,16 @@
               <form class="ready-form" data-ready-form>
                 <div class="field">
                   <label for="ready-flag">Flag</label>
-                  <input id="ready-flag" name="flag" type="text" maxlength="512" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="KernelFlag{...}" required data-ready-flag>
-                </div>
-                <div class="field">
-                  <label for="ready-top">TOP tokens (optional)</label>
-                  <textarea id="ready-top" name="topTokens" rows="3" maxlength="4096" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="TOP{...}" data-ready-top></textarea>
+                  <input id="ready-flag" name="flag" type="text" maxlength="512" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="KernelFlag{first_second_third}" required data-ready-flag>
                 </div>
                 <button class="primary-action ready-submit" type="submit" data-ready-submit>Submit</button>
               </form>
               <p class="ready-result" data-ready-result role="status" aria-live="polite"></p>
+              <section class="content-section" data-ready-discord-join-section hidden aria-labelledby="discord-join-title">
+                <h3 id="discord-join-title">Join KernelKittens Discord</h3>
+                <p data-ready-discord-join-status role="status" aria-live="polite"></p>
+                <a class="primary-action" data-ready-discord-join hidden>Join Discord</a>
+              </section>
             </li>
           </ol>
         </article>

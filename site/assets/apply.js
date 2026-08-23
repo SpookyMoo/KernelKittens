@@ -26,6 +26,9 @@ function parseSession(value) {
     typeof value.artifact.sha256 !== "string" ||
     !/^[a-f0-9]{64}$/u.test(value.artifact.sha256) ||
     !(value.solvedAtMs === null || Number.isSafeInteger(value.solvedAtMs)) ||
+    typeof value.discordJoinReady !== "boolean" ||
+    !(value.discordJoinUrl === null || typeof value.discordJoinUrl === "string") ||
+    !["unavailable", "ready", "joining", "joined", "role_pending", "retry"].includes(value.discordJoinState) ||
     !(value.firstDownloadAtMs === null || Number.isSafeInteger(value.firstDownloadAtMs)) ||
     !(value.reissueAvailableAtMs === null ||
       Number.isSafeInteger(value.reissueAvailableAtMs))
@@ -43,6 +46,9 @@ function parseSession(value) {
       sha256: value.artifact.sha256,
     },
     solvedAtMs: value.solvedAtMs,
+    discordJoinReady: value.discordJoinReady,
+    discordJoinUrl: value.discordJoinUrl,
+    discordJoinState: value.discordJoinState,
     firstDownloadAtMs: value.firstDownloadAtMs,
     reissueAvailableAtMs: value.reissueAvailableAtMs,
   };
@@ -64,7 +70,9 @@ if (root !== null) {
   const sha = requireElement(root, "[data-ready-sha]");
   const form = requireElement(root, "[data-ready-form]");
   const flag = requireElement(root, "[data-ready-flag]");
-  const topTokens = requireElement(root, "[data-ready-top]");
+  const joinSection = requireElement(root, "[data-ready-discord-join-section]");
+  const joinStatus = requireElement(root, "[data-ready-discord-join-status]");
+  const join = requireElement(root, "[data-ready-discord-join]");
   const submit = requireElement(root, "[data-ready-submit]");
   const result = requireElement(root, "[data-ready-result]");
   const logout = requireElement(root, "[data-ready-logout]");
@@ -85,6 +93,8 @@ if (root !== null) {
     login.hidden = false;
     for (const section of assignmentSections) section.hidden = true;
     reissuePanel.hidden = true;
+    joinSection.hidden = true;
+    join.hidden = true;
   }
 
   function updateReissueCountdown() {
@@ -111,15 +121,40 @@ if (root !== null) {
     if (reissue.disabled) reissueTimer = window.setInterval(updateReissueCountdown, 1000);
   }
 
+  function safeJoinUrl(value) {
+    if (!value.discordJoinReady || value.discordJoinUrl === null) return null;
+    const url = new URL(value.discordJoinUrl);
+    return url.protocol === "https:" && url.origin === new URL(apiOrigin).origin &&
+      url.pathname === "/auth/discord/join/start" ? url.toString() : null;
+  }
+
+  function showDiscordJoin(value) {
+    join.hidden = true;
+    const joinUrl = safeJoinUrl(value);
+    const messages = {
+      unavailable: "Discord join is unavailable.",
+      ready: "Your solve is accepted. Join the Discord server to receive your role.",
+      joining: "Discord join is in progress.",
+      joined: "Discord joined. Your Member role is ready.",
+      role_pending: "Discord joined. Your roles are still being added.",
+      retry: "Discord join did not finish. Try again.",
+    };
+    joinStatus.textContent = messages[value.discordJoinState];
+    joinSection.hidden = false;
+    if (joinUrl !== null && (value.discordJoinState === "ready" || value.discordJoinState === "retry")) {
+      join.href = joinUrl;
+      join.textContent = value.discordJoinState === "retry" ? "Try Discord again" : "Join Discord";
+      join.hidden = false;
+    }
+  }
+
   function showAssignment(value, clearProof = false) {
     session = value;
     if (clearProof) {
       flag.value = "";
-      topTokens.value = "";
     }
     form.hidden = false;
     flag.disabled = false;
-    topTokens.disabled = false;
     submit.hidden = false;
     submit.disabled = false;
     result.textContent = "";
@@ -143,6 +178,9 @@ if (root !== null) {
     if (value.solvedAtMs !== null) {
       form.hidden = true;
       result.textContent = "received.";
+      showDiscordJoin(value);
+    } else {
+      joinSection.hidden = true;
     }
   }
 
@@ -221,14 +259,13 @@ if (root !== null) {
         method: "POST",
         credentials: "include",
         headers: { accept: "application/json", "content-type": "text/plain;charset=UTF-8" },
-        body: JSON.stringify({ csrf: session.csrf, flag: flag.value, topTokens: topTokens.value }),
+        body: JSON.stringify({ csrf: session.csrf, flag: flag.value }),
       });
       const value = await response.json();
       const responseStatus = isObject(value) ? value.status : undefined;
       if (response.ok && responseStatus === "received") {
         result.textContent = "received.";
         flag.disabled = true;
-        topTokens.disabled = true;
         submit.hidden = true;
         return;
       }

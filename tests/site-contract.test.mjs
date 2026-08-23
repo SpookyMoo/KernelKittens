@@ -125,7 +125,11 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /data-ready-download/);
   assert.match(apply, /data-ready-form/);
   assert.match(apply, /data-ready-flag/);
-  assert.match(apply, /data-ready-top/);
+  assert.match(apply, /KernelFlag\{first_second_third\}/);
+  assert.match(apply, /Under 5:00 gets Member plus CTF Player\./);
+  assert.match(apply, /5:00 or longer gets Member\./);
+  assert.match(apply, /data-ready-discord-join/);
+  assert.doesNotMatch(apply, /TOP|topTokens|base64|password|256-password/i);
   assert.match(apply, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
   assert.doesNotMatch(apply, /<dialog|data-ready-dialog|data-ready-open|data-ready-close|data-ready-reopen/);
   assert.equal(apply.includes("/apply/stray.rar"), false);
@@ -154,7 +158,10 @@ test("the application client has no modal controls", () => {
   assert.match(client, /firstDownloadAtMs/);
   assert.match(client, /reissueAvailableAtMs/);
   assert.match(client, /setInterval/);
-  assert.match(client, /if \(clearProof\) \{\s*flag\.value = "";\s*topTokens\.value = "";/);
+  assert.doesNotMatch(client, /TOP|topTokens|data-ready-top|base64|password|256-password/i);
+  assert.match(client, /discordJoinReady/);
+  assert.match(client, /discordJoinUrl/);
+  assert.match(client, /data-ready-discord-join/);
   assert.match(client, /loadSession\(false, true\)/);
   assert.doesNotMatch(client, /function showAssignment\(value\) \{\s*session = value;\s*flag\.value = ""/);
   assert.match(client, /window\.setTimeout\(\(\) => loadSession\(true\), delayMs\)/);
