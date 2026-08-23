@@ -49,13 +49,22 @@ test("every public page uses only the Ready v3 archive theme", () => {
   }
 });
 
-test("the homepage links to the dedicated application route without loading it", () => {
+test("the homepage links to Apply and Discord without loading the application client", () => {
   const home = read("index.html");
   assert.match(home, /<title>Kernel Kittens \| CTF Team<\/title>/);
   assert.match(home, /href="\/apply\/"/);
   assert.match(home, /aria-current="page"[^>]*>\[home\]<\/a>/);
+  assert.equal((home.match(/href="https:\/\/apply\.kernelkittens\.team\/auth\/discord\/start"/g) ?? []).length, 1);
+  assert.match(home, /<span>Log in with Discord<\/span>/);
+  assert.equal((home.match(/src="\/brand\/discord-symbol\.svg"/g) ?? []).length, 1);
+  assert.match(home, /<img[^>]*src="\/brand\/discord-symbol\.svg"[^>]*alt=""[^>]*>/);
+  const discordSymbolPath = new URL("brand/discord-symbol.svg", root);
+  assert.equal(existsSync(discordSymbolPath), true, "the official Discord symbol must be self-hosted");
+  const discordSymbol = read("brand/discord-symbol.svg");
+  assert.match(discordSymbol, /viewBox="0 0 64 48"/);
+  assert.match(discordSymbol, /fill="white"/);
   assert.doesNotMatch(home, /data-ready-root|data-api-origin|data-ready-dialog|data-ready-form/);
-  assert.doesNotMatch(home, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
+  assert.doesNotMatch(home, /<script\b/);
 });
 
 test("the homepage removes the redundant path and publishes both verified results", () => {
@@ -102,8 +111,10 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /<h1>stray\.rar<\/h1>/);
   assert.match(apply, /<h2>stray\.rar<\/h2>/);
   assert.doesNotMatch(apply, /candidate assignment/);
-  assert.match(apply, /Team members can reliably finish this in 10-15 minutes\./);
-  assert.match(apply, /Finishing earns a Discord invite\. If you run out of time, a team member can still invite you manually\./);
+  assert.match(apply, /CTF members can reliably finish this in 10-15 minutes\./);
+  assert.doesNotMatch(apply, /Team members can reliably finish this in 10-15 minutes\./);
+  assert.match(apply, /Finishing at any time grants an invite to the CTF server\./);
+  assert.doesNotMatch(apply, /Finishing earns a Discord invite\./);
   assert.match(apply, /data-ready-root/);
   assert.match(apply, /data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
   assert.match(apply, /class="application-record"/);
@@ -168,6 +179,7 @@ test("the canonical stylesheet contains Ready v3 and no retired theme", () => {
   assert.match(css, /\.ready-archive-page\{/);
   assert.match(css, /--page:#060606/);
   assert.match(css, /--link:#ef6a2e/);
+  assert.match(css, /\.ready-archive-page \.crew-nav a,\.ready-archive-page \.crew-nav button\{[^}]*display:inline-flex/);
   for (const marker of forbiddenThemeMarkers) {
     assert.equal(css.includes(marker), false, `theme.css contains retired marker ${marker}`);
   }
