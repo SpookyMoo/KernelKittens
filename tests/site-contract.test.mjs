@@ -111,6 +111,7 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /<h1>stray\.rar<\/h1>/);
   assert.match(apply, /<h2>stray\.rar<\/h2>/);
   assert.doesNotMatch(apply, /candidate assignment/);
+  assert.match(apply, /This is a shard-based CTF\. Combine Parts A \+ B \+ C \+ D, in order, to form the final answer\./);
   assert.match(apply, /CTF members can reliably finish this in 10-15 minutes\./);
   assert.doesNotMatch(apply, /Team members can reliably finish this in 10-15 minutes\./);
   assert.match(apply, /Finishing at any time grants an invite to the CTF server\./);
