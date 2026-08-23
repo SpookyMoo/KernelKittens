@@ -27,7 +27,7 @@ function read(relative) {
   return readFileSync(new URL(relative, root), "utf8");
 }
 
-test("every public page uses only the Ready v3 archive theme", () => {
+test("every public page uses only the current archive theme", () => {
   for (const page of pages) {
     const html = read(page);
     assert.match(html, /<html lang="en">/);
@@ -111,11 +111,11 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /<h1>stray\.rar<\/h1>/);
   assert.match(apply, /<h2>stray\.rar<\/h2>/);
   assert.doesNotMatch(apply, /candidate assignment/);
-  assert.match(apply, /This is a shard-based CTF\. Combine Parts A \+ B \+ C \+ D, in order, to form the final answer\./);
-  assert.match(apply, /CTF members can reliably finish this in 10-15 minutes\./);
-  assert.doesNotMatch(apply, /Team members can reliably finish this in 10-15 minutes\./);
-  assert.match(apply, /Finishing at any time grants an invite to the CTF server\./);
-  assert.doesNotMatch(apply, /Finishing earns a Discord invite\./);
+  assert.doesNotMatch(apply, /READY-V[0-9]/);
+  assert.match(apply, /Find three fragments in order, then assemble them with the format below\./);
+  assert.match(apply, /This challenge is designed to be solvable in under five minutes\./);
+  assert.match(apply, /Every correct solve unlocks the KernelKittens Discord and grants Member\./);
+  assert.doesNotMatch(apply, /Parts A \+ B \+ C \+ D|10-15 minutes|repeat this challenge/i);
   assert.match(apply, /data-ready-root/);
   assert.match(apply, /data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
   assert.match(apply, /class="application-record"/);
@@ -125,7 +125,12 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /data-ready-download/);
   assert.match(apply, /data-ready-form/);
   assert.match(apply, /data-ready-flag/);
-  assert.match(apply, /data-ready-top/);
+  assert.match(apply, /KernelFlag\{first_second_third\}/);
+  assert.match(apply, /Submit format: <code>KernelFlag\{first_second_third\}<\/code>/);
+  assert.match(apply, /Under 5:00 gets Member plus CTF Player\./);
+  assert.match(apply, /5:00 or longer gets Member\./);
+  assert.match(apply, /data-ready-discord-join/);
+  assert.doesNotMatch(apply, /TOP|topTokens|base64|password|256-password/i);
   assert.match(apply, /<script type="module" src="\/assets\/apply\.js"><\/script>/);
   assert.doesNotMatch(apply, /<dialog|data-ready-dialog|data-ready-open|data-ready-close|data-ready-reopen/);
   assert.equal(apply.includes("/apply/stray.rar"), false);
@@ -134,12 +139,13 @@ test("the application is a full archive record with the existing API flow", () =
 test("the application explains timed scoring and keeps reissue hidden until download", () => {
   const apply = read("apply/index.html");
   assert.match(apply, /Scoring is based on the time from your first download to a correct submission\./);
-  assert.match(apply, /You can repeat this challenge as many times as you want\./);
+  assert.doesNotMatch(apply, /You can repeat this challenge as many times as you want\./);
   assert.match(apply, /data-ready-reissue-panel hidden/);
   assert.match(apply, /data-ready-reissue-status[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(apply, /data-ready-reissue/);
   assert.match(apply, />Request a new archive<\/button>/);
-  assert.match(apply, /One-hour cooldown after each archive's first download\./);
+  assert.match(apply, /A new archive is available after one hour\./);
+  assert.match(apply, /Your original timer does not reset\./);
 });
 
 test("the application client has no modal controls", () => {
@@ -154,7 +160,12 @@ test("the application client has no modal controls", () => {
   assert.match(client, /firstDownloadAtMs/);
   assert.match(client, /reissueAvailableAtMs/);
   assert.match(client, /setInterval/);
-  assert.match(client, /if \(clearProof\) \{\s*flag\.value = "";\s*topTokens\.value = "";/);
+  assert.doesNotMatch(client, /TOP|topTokens|data-ready-top|base64|password|256-password/i);
+  assert.match(client, /discordJoinReady/);
+  assert.match(client, /discordJoinUrl/);
+  assert.match(client, /response\.ok[\s\S]*?responseStatus === "received"[\s\S]*?await loadSession\(true\);/);
+  assert.match(client, /reissuePanel\.hidden = value\.solvedAtMs !== null \|\|/);
+  assert.match(client, /data-ready-discord-join/);
   assert.match(client, /loadSession\(false, true\)/);
   assert.doesNotMatch(client, /function showAssignment\(value\) \{\s*session = value;\s*flag\.value = ""/);
   assert.match(client, /window\.setTimeout\(\(\) => loadSession\(true\), delayMs\)/);
@@ -175,7 +186,7 @@ test("secondary routes expose their current-page state", () => {
   assert.match(read("accessibility/index.html"), /<a href="\/accessibility\/" aria-current="page">accessibility<\/a>/);
 });
 
-test("the canonical stylesheet contains Ready v3 and no retired theme", () => {
+test("the canonical stylesheet contains the current archive theme", () => {
   const css = read("assets/theme.css");
   assert.match(css, /\.ready-archive-page\{/);
   assert.match(css, /--page:#060606/);
