@@ -161,6 +161,8 @@ test("the application client has no modal controls", () => {
   assert.doesNotMatch(client, /TOP|topTokens|data-ready-top|base64|password|256-password/i);
   assert.match(client, /discordJoinReady/);
   assert.match(client, /discordJoinUrl/);
+  assert.match(client, /response\.ok[\s\S]*?responseStatus === "received"[\s\S]*?await loadSession\(true\);/);
+  assert.match(client, /reissuePanel\.hidden = value\.solvedAtMs !== null \|\|/);
   assert.match(client, /data-ready-discord-join/);
   assert.match(client, /loadSession\(false, true\)/);
   assert.doesNotMatch(client, /function showAssignment\(value\) \{\s*session = value;\s*flag\.value = ""/);

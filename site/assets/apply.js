@@ -167,7 +167,7 @@ if (root !== null) {
     downloadUrl.searchParams.set("action", value.downloadAction);
     download.href = downloadUrl.toString();
     sha.textContent = value.artifact.sha256;
-    reissuePanel.hidden = value.firstDownloadAtMs === null;
+    reissuePanel.hidden = value.solvedAtMs !== null || value.firstDownloadAtMs === null;
     if (!reissuePanel.hidden) startReissueCountdown();
     else {
       if (reissueTimer !== null) window.clearInterval(reissueTimer);
@@ -237,6 +237,9 @@ if (root !== null) {
         startReissueCountdown();
       } else if (response.status === 409 && responseStatus === "download_required") {
         reissueStatus.textContent = "Download this archive before requesting another one.";
+      } else if (response.status === 409 && responseStatus === "solved") {
+        reissuePanel.hidden = true;
+        await loadSession(true);
       } else if (response.status === 403) {
         reissueStatus.textContent = "Session expired. Sign in again.";
       } else {
@@ -267,6 +270,7 @@ if (root !== null) {
         result.textContent = "received.";
         flag.disabled = true;
         submit.hidden = true;
+        await loadSession(true);
         return;
       }
       if (response.status === 503 && responseStatus === "notification_pending") result.textContent = "Flag accepted, but the Discord receipt is still pending. Try submit again.";
