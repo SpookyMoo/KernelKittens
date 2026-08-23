@@ -43,21 +43,20 @@
               <p class="record-label">FILE RECORD</p>
               <h2>stray.rar</h2>
             </div>
-            <code>READY-V3</code>
+            <code>ACTIVE</code>
           </div>
           <section class="content-section" aria-labelledby="rules-title">
             <h3 id="rules-title">Before you start</h3>
             <ul>
               <li>Only the downloaded archive is in scope.</li>
-              <li>This is a shard-based CTF. Combine Parts A + B + C + D, in order, to form the final answer.</li>
+              <li>Find three fragments in order, then assemble them with the format below.</li>
               <li>Do not collaborate with or share challenge material with other people.</li>
               <li>Scoring is based on the time from your first download to a correct submission.</li>
-              <li>CTF members can reliably finish this in 10-15 minutes.</li>
-              <li>Finishing at any time grants an invite to the CTF server.</li>
-              <li>You can repeat this challenge as many times as you want.</li>
+              <li>This challenge is designed to be solvable in under five minutes.</li>
+              <li>Every correct solve unlocks the KernelKittens Discord and grants Member.</li>
+              <li>Under 5:00 gets Member plus CTF Player.</li>
+              <li>5:00 or longer gets Member.</li>
               <li>Submit the flag from your assigned archive.</li>
-            <li>Under 5:00 gets Member plus CTF Player.</li>
-            <li>5:00 or longer gets Member.</li>
             </ul>
           </section>
           <ol class="application-steps">
@@ -81,13 +80,14 @@
                 <a class="primary-action ready-download" href="https://apply.kernelkittens.team/v1/download" data-ready-download>Download stray.rar</a>
               </div>
               <div class="ready-reissue" data-ready-reissue-panel hidden>
-                <p>One-hour cooldown after each archive's first download.</p>
+                <p>A new archive is available after one hour. Your original timer does not reset.</p>
                 <p class="ready-reissue__status" data-ready-reissue-status role="status" aria-live="polite"></p>
                 <button class="ready-text-button" type="button" data-ready-reissue disabled>Request a new archive</button>
               </div>
             </li>
             <li class="application-step" data-ready-assignment hidden>
-              <h3 id="proof-title">Send your proof</h3>
+              <h3 id="proof-title">Submit your flag</h3>
+              <p>Submit format: <code>KernelFlag{first_second_third}</code></p>
               <form class="ready-form" data-ready-form>
                 <div class="field">
                   <label for="ready-flag">Flag</label>
