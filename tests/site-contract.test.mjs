@@ -70,6 +70,8 @@ test("the homepage removes the redundant path and publishes both verified result
   assert.match(home, /1 \/ 994/);
   assert.match(home, /28 \/ 28/);
   assert.match(home, /5,997/);
+  assert.equal((home.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
+  assert.doesNotMatch(home, /KK \/ RESULT 2026/);
   assert.equal((home.match(/1337_PwnSp4c3/g) ?? []).length, 2);
   assert.ok(
     home.indexOf("Competition results") < home.indexOf("Recruitment"),
@@ -89,6 +91,8 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /28 \/ 28/);
   assert.match(results, /5,997/);
   assert.match(results, /Open - International/);
+  assert.equal((results.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
+  assert.doesNotMatch(results, /KK \/ RESULT 2026/);
   assert.equal((results.match(/1337_PwnSp4c3/g) ?? []).length, 2);
 });
 
@@ -96,6 +100,10 @@ test("the application is a full archive record with the existing API flow", () =
   const apply = read("apply/index.html");
   assert.match(apply, /<title>stray\.rar \| Kernel Kittens<\/title>/);
   assert.match(apply, /<h1>stray\.rar<\/h1>/);
+  assert.match(apply, /<h2>stray\.rar<\/h2>/);
+  assert.doesNotMatch(apply, /candidate assignment/);
+  assert.match(apply, /Team members can reliably finish this in 10-15 minutes\./);
+  assert.match(apply, /Finishing earns a Discord invite\. If you run out of time, a team member can still invite you manually\./);
   assert.match(apply, /data-ready-root/);
   assert.match(apply, /data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
   assert.match(apply, /class="application-record"/);
