@@ -121,6 +121,8 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /class="application-record"/);
   assert.match(apply, /<ol class="application-steps">/);
   assert.equal((apply.match(/<li class="application-step"/g) ?? []).length, 3);
+  const visibleBeforeLogin = apply.slice(0, apply.indexOf("data-ready-assignment hidden"));
+  assert.match(visibleBeforeLogin, /Submit format: <code>KernelFlag\{first_second_third\}<\/code>/);
   assert.match(apply, /data-ready-login-link/);
   assert.match(apply, /data-ready-download/);
   assert.match(apply, /data-ready-form/);
