@@ -74,7 +74,7 @@ if (root !== null) {
   let session = null;
   let reissueTimer = null;
 
-  loginLink.href = `${apiOrigin}/auth/discord/start`;
+  loginLink.href = `${apiOrigin}/auth/discord/start?return_to=/apply/`;
   download.href = `${apiOrigin}/v1/download`;
 
   function showLoggedOut(message = "Discord assigns your file.") {

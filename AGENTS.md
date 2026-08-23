@@ -21,7 +21,9 @@
 - Use plain, direct language. Do not use em dashes, en dashes, smart quotes, corporate filler, or generic security hype.
 - Keep primary navigation visible without JavaScript.
 - Every page needs an obvious route home, a skip link, visible keyboard focus, and one `main` landmark.
-- Do not add analytics, cookies, remote fonts, forms, or third-party scripts without a new privacy and security review.
+- Discord sign-in and the live member console are the reviewed exceptions to the no-cookie rule. They use only the first-party `apply.kernelkittens.team` API, host-only HTTP-only cookies, and local JavaScript. Do not add analytics, remote fonts, embedded Discord code, or third-party scripts.
+- Membership means the exact `CTF Player` role in the exact KernelKittens guild. The browser must poll the minimal first-party member endpoint every 30 seconds while visible, recheck on focus and visibility return, and recheck before opening any member destination.
+- Member controls start locked. Any stale, future-dated, malformed, padded, failed, timed-out, or nonmember response stays locked. Browser state is only presentation; Discord channel permissions remain the final authority.
 
 ## Required release checks
 

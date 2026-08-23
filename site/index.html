@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="/assets/theme.css">
 </head>
 <body>
-  <div class="ready-archive-page">
+  <div class="ready-archive-page" data-member-console data-api-origin="https://apply.kernelkittens.team">
     <a class="skip-link" href="#ready-home">Skip to content</a>
     <header class="ready-site-header">
       <div class="ready-site-header__inner">
@@ -27,7 +27,7 @@
           <ul class="crew-nav">
             <li><a href="/" aria-current="page">[home]</a></li>
             <li><a href="/apply/">[apply]</a></li>
-            <li><a class="discord-login" href="https://apply.kernelkittens.team/auth/discord/start"><img src="/brand/discord-symbol.svg" alt="" width="64" height="48"><span>Log in with Discord</span></a></li>
+            <li><a class="discord-login" href="https://apply.kernelkittens.team/auth/discord/start?return_to=/"><img src="/brand/discord-symbol.svg" alt="" width="64" height="48"><span>Log in with Discord</span></a></li>
           </ul>
         </nav>
       </div>
@@ -39,6 +39,27 @@
           <p class="archive-lede">We play CTFs.</p>
           <p class="status-line">CTF team / est. 2026</p>
         </header>
+        <section class="archive-section member-console" aria-labelledby="member-console-title">
+          <div class="member-console__head">
+            <div>
+              <p class="path-label">Live Discord check / fail closed</p>
+              <h2 id="member-console-title">Member console</h2>
+            </div>
+            <span class="member-console__pulse" aria-hidden="true">LIVE</span>
+          </div>
+          <p class="member-console__status" data-member-status role="status" aria-live="polite">Live role check unavailable. Access stays locked.</p>
+          <ol class="authorization-trace" aria-label="Authorization trace">
+            <li data-member-trace="session"><span>Discord session</span><strong data-member-trace-value>UNKNOWN</strong></li>
+            <li data-member-trace="guild"><span>KernelKittens guild</span><strong data-member-trace-value>UNKNOWN</strong></li>
+            <li data-member-trace="role"><span>CTF Player role</span><strong data-member-trace-value>REQUIRED</strong></li>
+          </ol>
+          <div class="member-destinations" aria-describedby="member-lock-reason">
+            <button type="button" class="member-destination" data-member-destination="intake" aria-disabled="true"><strong>[intake]</strong><span>challenge intake and access</span></button>
+            <button type="button" class="member-destination" data-member-destination="liveOps" aria-disabled="true"><strong>[live ops]</strong><span>active events and coordination</span></button>
+            <button type="button" class="member-destination" data-member-destination="flagLedger" aria-disabled="true"><strong>[flag ledger]</strong><span>solver notes and accepted flags</span></button>
+          </div>
+          <p class="member-console__lock" id="member-lock-reason" data-member-lock-reason>CTF Player role required.</p>
+        </section>
         <section class="archive-section" aria-labelledby="competition-results-title">
           <h2 id="competition-results-title">Competition results</h2>
           <div class="competition-records">
@@ -78,5 +99,6 @@
       </div>
     </footer>
   </div>
+  <script type="module" src="/assets/member-console.js"></script>
 </body>
 </html>

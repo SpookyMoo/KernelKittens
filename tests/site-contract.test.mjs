@@ -49,12 +49,12 @@ test("every public page uses only the Ready v3 archive theme", () => {
   }
 });
 
-test("the homepage links to Apply and Discord without loading the application client", () => {
+test("the homepage links to Apply and Discord and loads only the member console client", () => {
   const home = read("index.html");
   assert.match(home, /<title>Kernel Kittens \| CTF Team<\/title>/);
   assert.match(home, /href="\/apply\/"/);
   assert.match(home, /aria-current="page"[^>]*>\[home\]<\/a>/);
-  assert.equal((home.match(/href="https:\/\/apply\.kernelkittens\.team\/auth\/discord\/start"/g) ?? []).length, 1);
+  assert.equal((home.match(/href="https:\/\/apply\.kernelkittens\.team\/auth\/discord\/start\?return_to=\/"/g) ?? []).length, 1);
   assert.match(home, /<span>Log in with Discord<\/span>/);
   assert.equal((home.match(/src="\/brand\/discord-symbol\.svg"/g) ?? []).length, 1);
   assert.match(home, /<img[^>]*src="\/brand\/discord-symbol\.svg"[^>]*alt=""[^>]*>/);
@@ -63,8 +63,44 @@ test("the homepage links to Apply and Discord without loading the application cl
   const discordSymbol = read("brand/discord-symbol.svg");
   assert.match(discordSymbol, /viewBox="0 0 64 48"/);
   assert.match(discordSymbol, /fill="white"/);
-  assert.doesNotMatch(home, /data-ready-root|data-api-origin|data-ready-dialog|data-ready-form/);
-  assert.doesNotMatch(home, /<script\b/);
+  assert.doesNotMatch(home, /data-ready-root|data-ready-dialog|data-ready-form/);
+  assert.match(home, /data-member-console data-api-origin="https:\/\/apply\.kernelkittens\.team"/);
+  assert.deepEqual(
+    [...home.matchAll(/<script type="module" src="([^"]+)"><\/script>/g)].map((match) => match[1]),
+    ["/assets/member-console.js"],
+  );
+});
+
+test("the homepage member console is honest, locked by default, and points at real channels", () => {
+  const home = read("index.html");
+  const client = read("assets/member-console-core.js");
+  assert.match(home, /<h2 id="member-console-title">Member console<\/h2>/);
+  assert.match(home, /Live Discord check/);
+  assert.match(home, /CTF Player role required\./);
+  assert.match(home, /Live role check unavailable\. Access stays locked\./);
+  assert.equal((home.match(/data-member-destination=/g) ?? []).length, 3);
+  assert.equal((home.match(/aria-disabled="true"/g) ?? []).length, 3);
+  assert.match(home, /data-member-destination="intake"[\s\S]*?<strong>\[intake\]<\/strong>/);
+  assert.match(home, /data-member-destination="liveOps"[\s\S]*?<strong>\[live ops\]<\/strong>/);
+  assert.match(home, /data-member-destination="flagLedger"[\s\S]*?<strong>\[flag ledger\]<\/strong>/);
+  assert.match(client, /1538643915672920097\/1538665438555406336/);
+  assert.match(client, /1538643915672920097\/1538665440367214642/);
+  assert.match(client, /1538643915672920097\/1538665441881489469/);
+});
+
+test("the member console continuously rechecks and fails closed in the browser", () => {
+  const client = read("assets/member-console.js");
+  assert.match(client, /\/v1\/member-session/);
+  assert.match(client, /credentials: "include"/);
+  assert.match(client, /cache: "no-store"/);
+  assert.match(client, /new AbortController\(\)/);
+  assert.match(client, /30_000/);
+  assert.match(client, /document\.addEventListener\("visibilitychange"/);
+  assert.match(client, /window\.addEventListener\("focus"/);
+  assert.match(client, /gate\.authorize\(destinationName\)/);
+  assert.match(client, /window\.location\.assign\(url\)/);
+  assert.match(client, /Live role check unavailable\. Access stays locked\./);
+  assert.match(client, /CTF Player role required\./);
 });
 
 test("the homepage removes the redundant path and publishes both verified results", () => {
@@ -121,6 +157,7 @@ test("the application is a full archive record with the existing API flow", () =
   assert.match(apply, /<ol class="application-steps">/);
   assert.equal((apply.match(/<li class="application-step"/g) ?? []).length, 3);
   assert.match(apply, /data-ready-login-link/);
+  assert.match(apply, /href="https:\/\/apply\.kernelkittens\.team\/auth\/discord\/start\?return_to=\/apply\/" data-ready-login-link/);
   assert.match(apply, /data-ready-download/);
   assert.match(apply, /data-ready-form/);
   assert.match(apply, /data-ready-flag/);
@@ -149,6 +186,7 @@ test("the application client has no modal controls", () => {
   assert.match(client, /\/v1\/submit/);
   assert.match(client, /\/v1\/logout/);
   assert.match(client, /\/v1\/reissue/);
+  assert.match(client, /\/auth\/discord\/start\?return_to=\/apply\//);
   assert.match(client, /data-ready-reissue-panel/);
   assert.match(client, /firstDownloadAtMs/);
   assert.match(client, /reissueAvailableAtMs/);
