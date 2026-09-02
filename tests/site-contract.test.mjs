@@ -67,7 +67,7 @@ test("the homepage links to Apply and Discord without loading the application cl
   assert.doesNotMatch(home, /<script\b/);
 });
 
-test("the homepage removes the redundant path and publishes both verified results", () => {
+test("the homepage removes the redundant path and publishes every verified result", () => {
   const home = read("index.html");
   assert.doesNotMatch(home, /<p class="path-label">\/home<\/p>/);
   assert.match(home, /<h2 id="competition-results-title">Competition results<\/h2>/);
@@ -79,6 +79,10 @@ test("the homepage removes the redundant path and publishes both verified result
   assert.match(home, /1 \/ 994/);
   assert.match(home, /28 \/ 28/);
   assert.match(home, /5,997/);
+  assert.match(home, /Kaspersky\{CTF\} 2026/);
+  assert.match(home, /3 \/ 361/);
+  assert.match(home, /Division: North America/);
+  assert.equal((home.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
   assert.equal((home.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
   assert.doesNotMatch(home, /KK \/ RESULT 2026/);
   assert.equal((home.match(/1337_PwnSp4c3/g) ?? []).length, 2);
@@ -90,7 +94,7 @@ test("the homepage removes the redundant path and publishes both verified result
 
 test("the Results page contains the complete verified competition record", () => {
   const results = read("results/index.html");
-  assert.equal((results.match(/class="archive-record"/g) ?? []).length, 2);
+  assert.equal((results.match(/class="archive-record"/g) ?? []).length, 3);
   assert.match(results, /Cyber Apocalypse 2026/);
   assert.match(results, /12 \/ 6,744/);
   assert.match(results, /136 \/ 136/);
@@ -100,6 +104,14 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /28 \/ 28/);
   assert.match(results, /5,997/);
   assert.match(results, /Open - International/);
+  assert.match(results, /Kaspersky\{CTF\} 2026/);
+  assert.match(results, /3 \/ 361/);
+  assert.match(results, /Division: North America/);
+  assert.equal((results.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
+  assert.ok(
+    results.indexOf("Kaspersky{CTF} 2026") < results.indexOf("Cyber Apocalypse 2026"),
+    "the newest result must appear first",
+  );
   assert.equal((results.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
   assert.doesNotMatch(results, /KK \/ RESULT 2026/);
   assert.equal((results.match(/1337_PwnSp4c3/g) ?? []).length, 2);
