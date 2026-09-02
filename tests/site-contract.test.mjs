@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
-import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const root = new URL("../site/", import.meta.url);
 const pages = [
@@ -221,7 +221,7 @@ test("all local page assets exist", () => {
     for (const match of html.matchAll(/(?:href|src)="(\/[^"]+)"/g)) {
       const target = match[1].split("#", 1)[0].split("?", 1)[0];
       if (target === "/" || target.endsWith("/")) continue;
-      assert.equal(existsSync(join(new URL(root).pathname, target)), true, `${page} references missing ${target}`);
+      assert.equal(existsSync(fileURLToPath(new URL(`.${target}`, root))), true, `${page} references missing ${target}`);
     }
   }
 });
