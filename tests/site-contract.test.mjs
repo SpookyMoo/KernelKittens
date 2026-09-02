@@ -82,6 +82,7 @@ test("the homepage removes the redundant path and publishes every verified resul
   assert.match(home, /Kaspersky\{CTF\} 2026/);
   assert.match(home, /3 \/ 361/);
   assert.match(home, /Division: North America, South America, Caribbean/);
+  assert.match(home, /30 \/ 30/);
   assert.match(home, /4,413/);
   assert.equal((home.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
   assert.equal((home.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
@@ -108,6 +109,7 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /Kaspersky\{CTF\} 2026/);
   assert.match(results, /3 \/ 361/);
   assert.match(results, /Division: North America, South America, Caribbean/);
+  assert.match(results, /30 \/ 30/);
   assert.match(results, /4,413/);
   assert.equal((results.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
   assert.ok(
