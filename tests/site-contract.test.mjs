@@ -212,7 +212,7 @@ test("the roster is published on the homepage and the team page", () => {
   const apocalypse = "Cyber Apocalypse 2026 (1337_PwnSp4c3)";
   const bushbash = "BushBash CTF 2026 (1337_PwnSp4c3)";
   const members = [
-    ["spookymoo", "SHOOTTHEMESSENGER/Moo", [kaspersky, apocalypse, bushbash]],
+    ["spookymoo", "SHOOTTHEMESSENGER", [kaspersky, apocalypse, bushbash]],
     ["hoxed", "Hoxed", [kaspersky]],
     ["romil1998", "romil0xsec", [kaspersky, apocalypse, bushbash]],
     ["deva_rp", "Deva_RP", [kaspersky]],
