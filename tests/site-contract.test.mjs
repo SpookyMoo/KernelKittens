@@ -226,9 +226,8 @@ test("the roster is published on the homepage and the team page", () => {
     for (const [index, [file, name, played]] of members.entries()) {
       assert.ok(html.includes(`src="/brand/team/${file}.png"`), `${page} is missing the ${file} avatar`);
       assert.ok(html.includes(`<h3>${name}</h3>`), `${page} is missing the name ${name}`);
-      assert.ok(html.includes(`<p class="roster-handle">${file}</p>`), `${page} is missing the handle ${file}`);
       const card = cards[index];
-      assert.ok(card.includes(file), `${page} card order drifted at ${file}`);
+      assert.ok(card.includes(`/brand/team/${file}.png`), `${page} card order drifted at ${file}`);
       assert.deepEqual(
         [...card.matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1]),
         played,
@@ -240,6 +239,14 @@ test("the roster is published on the homepage and the team page", () => {
       assert.match(match[0], /width="128"[^>]*height="128"/, "avatars need intrinsic dimensions");
     }
     assert.equal(html.includes("Romil Patel"), false, `${page} must not publish a real name`);
+    assert.equal(html.includes("roster-handle"), false, `${page} must not publish Discord usernames`);
+    for (const [file] of members) {
+      assert.equal(
+        new RegExp(`>[^<]*\b${file}\b[^<]*<`).test(html),
+        false,
+        `${page} still shows the Discord username ${file} as visible text`,
+      );
+    }
     assert.equal(html.includes("sp4reparts"), false, `${page} lists only the five players`);
     assert.equal(html.includes("cdn.discordapp.com"), false, `${page} must self-host avatars`);
   }
@@ -279,6 +286,7 @@ test("the canonical stylesheet contains the current archive theme", () => {
   assert.match(css, /\.ready-archive-page \.crew-nav a,\.ready-archive-page \.crew-nav button\{[^}]*display:inline-flex/);
   assert.match(css, /\.ready-archive-page \.roster\{[^}]*display:grid/);
   assert.match(css, /\.ready-archive-page \.roster-avatar\{[^}]*object-fit:cover/);
+  assert.equal(css.includes("roster-handle"), false, "the Discord username style is retired");
   for (const marker of forbiddenThemeMarkers) {
     assert.equal(css.includes(marker), false, `theme.css contains retired marker ${marker}`);
   }
