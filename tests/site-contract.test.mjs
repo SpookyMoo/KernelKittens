@@ -83,6 +83,9 @@ test("the homepage removes the redundant path and publishes every verified resul
   assert.match(home, /Kaspersky\{CTF\} 2026/);
   assert.match(home, /3 \/ 361/);
   assert.match(home, /<span class="placement-extra">1 \/ 52 \(Europe\)<\/span>/);
+  assert.match(home, /<span class="placement-extra">30 \/ 30 \(Europe\)<\/span>/);
+  assert.match(home, /<span class="placement-extra">4,413 \(Europe\)<\/span>/);
+  assert.equal((home.match(/class="placement-extra"/g) ?? []).length, 3, "the Europe result needs a line in all three columns");
   assert.match(home, /Division: North America, South America, Caribbean/);
   assert.match(home, /30 \/ 30/);
   assert.match(home, /4,413/);
@@ -111,6 +114,9 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /Kaspersky\{CTF\} 2026/);
   assert.match(results, /3 \/ 361/);
   assert.match(results, /<span class="placement-extra">1 \/ 52 \(Europe\)<\/span>/);
+  assert.match(results, /<span class="placement-extra">30 \/ 30 \(Europe\)<\/span>/);
+  assert.match(results, /<span class="placement-extra">4,413 \(Europe\)<\/span>/);
+  assert.equal((results.match(/class="placement-extra"/g) ?? []).length, 3, "the Europe result needs a line in all three columns");
   assert.match(results, /Division: North America, South America, Caribbean/);
   assert.match(results, /30 \/ 30/);
   assert.match(results, /4,413/);
