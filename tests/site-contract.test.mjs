@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
-import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const root = new URL("../site/", import.meta.url);
 const pages = [
   "index.html",
+  "team/index.html",
   "apply/index.html",
   "results/index.html",
   "writeups/index.html",
@@ -198,6 +199,52 @@ test("the application client has no modal controls", () => {
   );
 });
 
+test("the roster is published on the homepage and the team page", () => {
+  const members = [
+    ["spookymoo", "SHOOTTHEMESSENGER/Moo"],
+    ["hoxed", "Hoxed"],
+    ["romil1998", "romil0xsec"],
+    ["deva_rp", "Deva_RP"],
+    ["antsyy_", "Antsy"],
+  ];
+  for (const page of ["index.html", "team/index.html"]) {
+    const html = read(page);
+    assert.equal((html.match(/class="roster-member"/g) ?? []).length, members.length, `${page} needs one card per player`);
+    for (const [file, name] of members) {
+      assert.ok(html.includes(`src="/brand/team/${file}.png"`), `${page} is missing the ${file} avatar`);
+      assert.ok(html.includes(`<h3>${name}</h3>`), `${page} is missing the name ${name}`);
+      assert.ok(html.includes(`<p class="roster-handle">${file}</p>`), `${page} is missing the handle ${file}`);
+    }
+    for (const match of html.matchAll(/<img class="roster-avatar"[^>]*>/g)) {
+      assert.match(match[0], /alt=""/, "avatars are decorative next to the name");
+      assert.match(match[0], /width="128"[^>]*height="128"/, "avatars need intrinsic dimensions");
+    }
+    assert.equal(html.includes("Romil Patel"), false, `${page} must not publish a real name`);
+    assert.equal(html.includes("sp4reparts"), false, `${page} lists only the five players`);
+    assert.equal(html.includes("cdn.discordapp.com"), false, `${page} must self-host avatars`);
+  }
+  const home = read("index.html");
+  assert.match(home, /<h2 id="team-title">Team<\/h2>/);
+  assert.match(home, /<a class="archive-action" href="\/team\/">Full team<\/a>/);
+  assert.ok(
+    home.indexOf("Competition results") < home.indexOf('id="team-title"') &&
+      home.indexOf('id="team-title"') < home.indexOf("Recruitment"),
+    "the team sits between results and recruitment",
+  );
+  const team = read("team/index.html");
+  assert.match(team, /<title>Team \| Kernel Kittens<\/title>/);
+  assert.match(team, /<h1>Team<\/h1>/);
+  assert.doesNotMatch(team, /<script/);
+});
+
+test("every route exposes the team link", () => {
+  for (const page of pages) {
+    assert.ok(read(page).includes('href="/team/"'), `${page} is missing the team link`);
+  }
+  assert.match(read("team/index.html"), /<a href="\/team\/" aria-current="page">\[team\]<\/a>/);
+  assert.match(read("sitemap.xml"), /<loc>https:\/\/kernelkittens\.team\/team\/<\/loc>/);
+});
+
 test("secondary routes expose their current-page state", () => {
   assert.match(read("results/index.html"), /<a href="\/results\/" aria-current="page">\[results\]<\/a>/);
   assert.match(read("writeups/index.html"), /<a href="\/writeups\/" aria-current="page">\[write-ups\]<\/a>/);
@@ -210,6 +257,8 @@ test("the canonical stylesheet contains the current archive theme", () => {
   assert.match(css, /--page:#060606/);
   assert.match(css, /--link:#ef6a2e/);
   assert.match(css, /\.ready-archive-page \.crew-nav a,\.ready-archive-page \.crew-nav button\{[^}]*display:inline-flex/);
+  assert.match(css, /\.ready-archive-page \.roster\{[^}]*display:grid/);
+  assert.match(css, /\.ready-archive-page \.roster-avatar\{[^}]*object-fit:cover/);
   for (const marker of forbiddenThemeMarkers) {
     assert.equal(css.includes(marker), false, `theme.css contains retired marker ${marker}`);
   }
@@ -221,7 +270,7 @@ test("all local page assets exist", () => {
     for (const match of html.matchAll(/(?:href|src)="(\/[^"]+)"/g)) {
       const target = match[1].split("#", 1)[0].split("?", 1)[0];
       if (target === "/" || target.endsWith("/")) continue;
-      assert.equal(existsSync(join(new URL(root).pathname, target)), true, `${page} references missing ${target}`);
+      assert.equal(existsSync(fileURLToPath(new URL(`.${target}`, root))), true, `${page} references missing ${target}`);
     }
   }
 });
