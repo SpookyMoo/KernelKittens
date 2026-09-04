@@ -82,13 +82,14 @@ test("the homepage removes the redundant path and publishes every verified resul
   assert.match(home, /5,997/);
   assert.match(home, /Kaspersky\{CTF\} 2026/);
   assert.match(home, /3 \/ 361/);
+  assert.match(home, /<span class="placement-extra">1 \/ 52 \(Europe\)<\/span>/);
   assert.match(home, /Division: North America, South America, Caribbean/);
   assert.match(home, /30 \/ 30/);
   assert.match(home, /4,413/);
   assert.equal((home.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
   assert.equal((home.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
   assert.doesNotMatch(home, /KK \/ RESULT 2026/);
-  assert.equal((home.match(/1337_PwnSp4c3/g) ?? []).length, 2);
+  assert.equal((home.match(/Credited to <strong>1337_PwnSp4c3<\/strong>/g) ?? []).length, 2);
   assert.ok(
     home.indexOf("Competition results") < home.indexOf("Recruitment"),
     "results must appear before Recruitment",
@@ -109,6 +110,7 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /Open - International/);
   assert.match(results, /Kaspersky\{CTF\} 2026/);
   assert.match(results, /3 \/ 361/);
+  assert.match(results, /<span class="placement-extra">1 \/ 52 \(Europe\)<\/span>/);
   assert.match(results, /Division: North America, South America, Caribbean/);
   assert.match(results, /30 \/ 30/);
   assert.match(results, /4,413/);
@@ -200,20 +202,32 @@ test("the application client has no modal controls", () => {
 });
 
 test("the roster is published on the homepage and the team page", () => {
+  const kaspersky = "Kaspersky{CTF} 2026";
+  const apocalypse = "Cyber Apocalypse 2026 (1337_PwnSp4c3)";
+  const bushbash = "BushBash CTF 2026 (1337_PwnSp4c3)";
   const members = [
-    ["spookymoo", "SHOOTTHEMESSENGER/Moo"],
-    ["hoxed", "Hoxed"],
-    ["romil1998", "romil0xsec"],
-    ["deva_rp", "Deva_RP"],
-    ["antsyy_", "Antsy"],
+    ["spookymoo", "SHOOTTHEMESSENGER/Moo", [kaspersky, apocalypse, bushbash]],
+    ["hoxed", "Hoxed", [kaspersky]],
+    ["romil1998", "romil0xsec", [kaspersky, apocalypse, bushbash]],
+    ["deva_rp", "Deva_RP", [kaspersky]],
+    ["antsyy_", "Antsy", [kaspersky, apocalypse, bushbash]],
   ];
   for (const page of ["index.html", "team/index.html"]) {
     const html = read(page);
     assert.equal((html.match(/class="roster-member"/g) ?? []).length, members.length, `${page} needs one card per player`);
-    for (const [file, name] of members) {
+    const cards = [...html.matchAll(/<li class="roster-member">[\s\S]*?<\/li>\s*<\/ul>/g)].map((m) => m[0]);
+    assert.equal(cards.length, members.length, `${page} needs one parsed card per player`);
+    for (const [index, [file, name, played]] of members.entries()) {
       assert.ok(html.includes(`src="/brand/team/${file}.png"`), `${page} is missing the ${file} avatar`);
       assert.ok(html.includes(`<h3>${name}</h3>`), `${page} is missing the name ${name}`);
       assert.ok(html.includes(`<p class="roster-handle">${file}</p>`), `${page} is missing the handle ${file}`);
+      const card = cards[index];
+      assert.ok(card.includes(file), `${page} card order drifted at ${file}`);
+      assert.deepEqual(
+        [...card.matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1]),
+        played,
+        `${page} lists the wrong competitions for ${file}`,
+      );
     }
     for (const match of html.matchAll(/<img class="roster-avatar"[^>]*>/g)) {
       assert.match(match[0], /alt=""/, "avatars are decorative next to the name");
