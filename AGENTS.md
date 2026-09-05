@@ -15,6 +15,10 @@
 - Never add embargoed challenge text, flags, private draft markers, personal identities, credential IDs, or local archive paths.
 - Attribute the 2026 Cyber Apocalypse result to the prior team `1337_PwnSp4c3`.
 - Render only verified competition results. Do not add a public certification gallery unless Moo directly changes that decision.
+- The roster on `/team/` and the homepage shows display names and competitions only. Never publish Discord usernames. Moo had them removed for opsec, and `tests/site-contract.test.mjs` fails if one returns as visible text.
+- Use `romil0xsec`, never the real name in that member's Discord global name. Moo's card is `SHOOTTHEMESSENGER`.
+- Keep the prior-team suffix on roster events, as in `Cyber Apocalypse 2026 (1337_PwnSp4c3)`. Without it the roster reads as if those were Kernel Kittens results.
+- Roster avatars are self-hosted under `site/brand/team/`. The CSP is `img-src 'self'`, so never point an avatar at `cdn.discordapp.com`.
 
 ## Copy and interface
 
