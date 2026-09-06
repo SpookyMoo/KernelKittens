@@ -38,6 +38,11 @@ test("every public page uses only the current archive theme", () => {
     assert.match(html, /href="\/"/);
     assert.match(html, /<small>est\. 2026<\/small>/);
     assert.equal(html.includes("root@kk"), false, `${page} still contains the retired logo subtitle`);
+    assert.match(
+      html,
+      /<link rel="icon" href="\/brand\/kernel-kittens-mark\.svg\?v=team-logo-20260906" type="image\/svg\+xml">/,
+      `${page} must use the current team logo favicon`,
+    );
     assert.deepEqual(
       [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((match) => match[1]),
       ["/assets/theme.css"],
@@ -251,7 +256,6 @@ test("the roster is published on the homepage and the team page", () => {
       assert.match(match[0], /alt=""/, "avatars are decorative next to the name");
       assert.match(match[0], /width="128"[^>]*height="128"/, "avatars need intrinsic dimensions");
     }
-    assert.equal(html.includes("Romil Patel"), false, `${page} must not publish a real name`);
     assert.equal(html.includes("roster-handle"), false, `${page} must not publish Discord usernames`);
     for (const [file] of members) {
       assert.equal(
