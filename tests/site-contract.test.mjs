@@ -297,6 +297,10 @@ test("the canonical stylesheet contains the current archive theme", () => {
   assert.match(css, /--page:#060606/);
   assert.match(css, /--link:#ef6a2e/);
   assert.match(css, /\.ready-archive-page \.crew-nav a,\.ready-archive-page \.crew-nav button\{[^}]*display:inline-flex/);
+  assert.match(css, /\.ready-archive-page \.competition-records\{[^}]*max-width:none/);
+  assert.match(css, /\.ready-archive-page \.competition-records\{[^}]*display:grid/);
+  assert.match(css, /\.ready-archive-page \.roster\{[^}]*max-width:none/);
+  assert.match(css, /\.ready-archive-page \.roster\{[^}]*grid-template-columns:1fr/);
   assert.match(css, /\.ready-archive-page \.roster\{[^}]*display:grid/);
   assert.match(css, /\.ready-archive-page \.roster-avatar\{[^}]*object-fit:cover/);
   assert.equal(css.includes("roster-handle"), false, "the Discord username style is retired");
