@@ -73,7 +73,7 @@ test("the homepage removes the redundant path and publishes every verified resul
   assert.doesNotMatch(home, /<p class="path-label">\/home<\/p>/);
   assert.match(home, /<h2 id="competition-results-title">Competition results<\/h2>/);
   assert.match(home, /BlackHat MEA Qualification CTF 2026/);
-  assert.match(home, /19 \/ 80/);
+  assert.match(home, /19 \/ 3,349\*/);
   assert.match(home, /<dt>Solved<\/dt><dd>15<\/dd>/);
   assert.match(home, /1,500/);
   assert.match(home, /Cyber Apocalypse 2026/);
@@ -111,7 +111,7 @@ test("the Results page contains the complete verified competition record", () =>
   const results = read("results/index.html");
   assert.equal((results.match(/class="archive-record"/g) ?? []).length, 4);
   assert.match(results, /BlackHat MEA Qualification CTF 2026/);
-  assert.match(results, /19 \/ 80/);
+  assert.match(results, /19 \/ 3,349\*/);
   assert.match(results, /<dt>Solved<\/dt><dd>15<\/dd>/);
   assert.match(results, /1,500/);
   assert.match(results, /Cyber Apocalypse 2026/);
