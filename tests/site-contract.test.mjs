@@ -72,6 +72,10 @@ test("the homepage removes the redundant path and publishes every verified resul
   const home = read("index.html");
   assert.doesNotMatch(home, /<p class="path-label">\/home<\/p>/);
   assert.match(home, /<h2 id="competition-results-title">Competition results<\/h2>/);
+  assert.match(home, /BlackHat MEA Qualification CTF 2026/);
+  assert.match(home, /19 \/ 80/);
+  assert.match(home, /<dt>Solved<\/dt><dd>15<\/dd>/);
+  assert.match(home, /1,500/);
   assert.match(home, /Cyber Apocalypse 2026/);
   assert.match(home, /12 \/ 6,744/);
   assert.match(home, /136 \/ 136/);
@@ -89,7 +93,11 @@ test("the homepage removes the redundant path and publishes every verified resul
   assert.match(home, /Division: North America, South America, Caribbean/);
   assert.match(home, /30 \/ 30/);
   assert.match(home, /4,413/);
-  assert.equal((home.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
+  assert.equal((home.match(/RESULT 2026 \/ team result/g) ?? []).length, 2);
+  assert.ok(
+    home.indexOf("BlackHat MEA Qualification CTF 2026") < home.indexOf("Kaspersky{CTF} 2026"),
+    "the newest result must appear first",
+  );
   assert.equal((home.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
   assert.doesNotMatch(home, /KK \/ RESULT 2026/);
   assert.equal((home.match(/Credited to <strong>1337_PwnSp4c3<\/strong>/g) ?? []).length, 2);
@@ -101,7 +109,11 @@ test("the homepage removes the redundant path and publishes every verified resul
 
 test("the Results page contains the complete verified competition record", () => {
   const results = read("results/index.html");
-  assert.equal((results.match(/class="archive-record"/g) ?? []).length, 3);
+  assert.equal((results.match(/class="archive-record"/g) ?? []).length, 4);
+  assert.match(results, /BlackHat MEA Qualification CTF 2026/);
+  assert.match(results, /19 \/ 80/);
+  assert.match(results, /<dt>Solved<\/dt><dd>15<\/dd>/);
+  assert.match(results, /1,500/);
   assert.match(results, /Cyber Apocalypse 2026/);
   assert.match(results, /12 \/ 6,744/);
   assert.match(results, /136 \/ 136/);
@@ -120,9 +132,9 @@ test("the Results page contains the complete verified competition record", () =>
   assert.match(results, /Division: North America, South America, Caribbean/);
   assert.match(results, /30 \/ 30/);
   assert.match(results, /4,413/);
-  assert.equal((results.match(/RESULT 2026 \/ team result/g) ?? []).length, 1);
+  assert.equal((results.match(/RESULT 2026 \/ team result/g) ?? []).length, 2);
   assert.ok(
-    results.indexOf("Kaspersky{CTF} 2026") < results.indexOf("Cyber Apocalypse 2026"),
+    results.indexOf("BlackHat MEA Qualification CTF 2026") < results.indexOf("Kaspersky{CTF} 2026"),
     "the newest result must appear first",
   );
   assert.equal((results.match(/RESULT 2026 \/ member result with a prior team/g) ?? []).length, 2);
@@ -208,15 +220,16 @@ test("the application client has no modal controls", () => {
 });
 
 test("the roster is published on the homepage and the team page", () => {
+  const blackHatMea = "BlackHat MEA Qualification CTF 2026";
   const kaspersky = "Kaspersky{CTF} 2026";
   const apocalypse = "Cyber Apocalypse 2026 (1337_PwnSp4c3)";
   const bushbash = "BushBash CTF 2026 (1337_PwnSp4c3)";
   const members = [
-    ["spookymoo", "SHOOTTHEMESSENGER", [kaspersky, apocalypse, bushbash]],
-    ["hoxed", "Hoxed", [kaspersky]],
-    ["romil1998", "romil0xsec", [kaspersky, apocalypse, bushbash]],
-    ["deva_rp", "Deva_RP", [kaspersky]],
-    ["antsyy_", "Antsy", [kaspersky, apocalypse, bushbash]],
+    ["spookymoo", "SHOOTTHEMESSENGER", [blackHatMea, kaspersky, apocalypse, bushbash]],
+    ["hoxed", "Hoxed", [blackHatMea, kaspersky]],
+    ["romil1998", "romil0xsec", [blackHatMea, kaspersky, apocalypse, bushbash]],
+    ["deva_rp", "Deva_RP", [blackHatMea, kaspersky]],
+    ["antsyy_", "Antsy", [blackHatMea, kaspersky, apocalypse, bushbash]],
   ];
   for (const page of ["index.html", "team/index.html"]) {
     const html = read(page);
